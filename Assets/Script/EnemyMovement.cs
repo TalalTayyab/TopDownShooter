@@ -86,7 +86,7 @@ public class EnemyMovement : MonoBehaviour
 
     private void HandlePlayerTargetting()
     {
-        if (_controller.AwareOfPlayer)
+      //  if (_controller.AwareOfPlayer)
         {
             _targetDirection = _controller.DirectionToPlayer.normalized;
         }

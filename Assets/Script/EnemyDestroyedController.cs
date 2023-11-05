@@ -9,7 +9,7 @@ public class EnemyDestroyedController : MonoBehaviour
     {
         Destroy(gameObject, delay);
 
-        var collectableObj = Instantiate(_collectablePrefab, transform.position, transform.rotation);
+        var collectableObj = Instantiate(_collectablePrefab, transform.position,Quaternion.Euler(0,0,0));
         var rnd = Random.Range(0, 3);
         if (rnd == 0)
         {
