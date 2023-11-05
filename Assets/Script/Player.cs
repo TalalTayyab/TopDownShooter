@@ -79,10 +79,13 @@ public class Player : MonoBehaviour
 
     void RotateInDirectionOfMouse()
     {
-        Vector3 mousePosition = Input.mousePosition;
+        Vector2 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
-        transform.up = direction;
+        //Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
+        //transform.up = direction;
+        var direction = mousePosition - _rigidbody2.position;
+        var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        _rigidbody2.rotation = angle;
     }
 
     

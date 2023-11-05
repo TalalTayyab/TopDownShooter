@@ -2,15 +2,21 @@ using UnityEngine;
 
 public class CollectableScript : MonoBehaviour
 {
+    [SerializeField] private float _autoDestoryTime;
     [SerializeField] SpriteRenderer _spriteRenderer;
+    [SerializeField] Sprite _healthSprite;
+    [SerializeField] Sprite _multiweaponSprite;
+    [SerializeField] Sprite _fastWeaponSprite;
     HealthController _playerHealthController;
     Shoot _playerShoot;
     CollectableTypeEnum _collectableType = CollectableTypeEnum.Health;
+
     public enum CollectableTypeEnum { Health = 0, FastWeapon = 1 , MultiShot =2 };
     private void Awake()
     {
         _playerHealthController = FindObjectOfType<Player>().GetComponent<HealthController>();
         _playerShoot = FindObjectOfType<Player>().GetComponent<Shoot>();
+        Destroy(gameObject, _autoDestoryTime);
     }
 
     public void SetCollectableType(CollectableTypeEnum collectableType)
@@ -18,15 +24,15 @@ public class CollectableScript : MonoBehaviour
         switch (collectableType)
         {
             case CollectableTypeEnum.Health:
-                _spriteRenderer.color = Color.green;
+                _spriteRenderer.sprite = _healthSprite;
                 break;
 
             case CollectableTypeEnum.FastWeapon:
-                _spriteRenderer.color = Color.yellow;
+                _spriteRenderer.sprite = _fastWeaponSprite;
                 break;
 
             case CollectableTypeEnum.MultiShot:
-                _spriteRenderer.color = Color.red;
+                _spriteRenderer.sprite = _multiweaponSprite;
                 break;
         }
 
@@ -45,12 +51,14 @@ public class CollectableScript : MonoBehaviour
 
             if (_collectableType == CollectableTypeEnum.FastWeapon)
             {
-                _playerShoot.SetTimeBetweenShots(0.2f);
+                _playerShoot.SetTimeBetweenShots(0.5f);
+                _playerShoot.SetMultiShot(false);
 
             }
 
             if (_collectableType == CollectableTypeEnum.MultiShot)
             {
+                _playerShoot.SetTimeBetweenShots(1f);
                 _playerShoot.SetMultiShot(true);
             }
 

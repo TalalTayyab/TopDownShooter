@@ -64,6 +64,11 @@ public class Shoot : MonoBehaviour
         var bullet = Instantiate(_bulletPrefab, _gunOffset.position, bulletRoation);
         var rigidBody = bullet.GetComponent<Rigidbody2D>();
         rigidBody.velocity = _bulletSpeed * direction;
+
+        //var bullet = Instantiate(_bulletPrefab, _gunOffset.position, bulletRoation);
+        //var rigidBody = bullet.GetComponent<Rigidbody2D>();
+        //rigidBody.AddForce(_gunOffset.up * _bulletSpeed, ForceMode2D.Impulse);
+
     }
 
     private void OnFire(InputValue inputValue)

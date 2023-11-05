@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    [SerializeField] private float _autoDestoryTime;
     private Camera _camera;
     
-    
-
     private void Awake()
     {
         _camera = Camera.main;
+        Destroy(gameObject, _autoDestoryTime);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -24,6 +24,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+        
         DestoryWhenOffScreen();
     }
 
