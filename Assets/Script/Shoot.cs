@@ -11,6 +11,9 @@ public class Shoot : MonoBehaviour
     [SerializeField] private Transform _gunOffset;
     [SerializeField] private float _timeBetweenShots;
     [SerializeField] private bool _multiShot;
+    [SerializeField] private GameObject _bombPrefab;
+    [SerializeField] private float _bombSpeed;
+    [SerializeField] private bool throwBomb;
     private float _lastfireTime;
     private bool _fireContiniously;
     private bool _fireSingle;
@@ -35,11 +38,28 @@ public class Shoot : MonoBehaviour
 
             if (timeSinceLastFire >= _timeBetweenShots)
             {
-                FireBullet();
+                if (throwBomb)
+                {
+                    ThrowBomb();
+                }
+                else
+                {
+                    FireBullet();
+                }
+
                 _lastfireTime = Time.time;
                 _fireSingle = false;
             }
         }
+    }
+
+    private void ThrowBomb()
+    {
+        var bomb = Instantiate(_bombPrefab, _gunOffset.position, transform.rotation);
+        //bomb.GetComponent<Rigidbody2D>().AddForce(transform.up * _bombSpeed, ForceMode2D.Impulse);
+        var rigidBody = bomb.GetComponent<Rigidbody2D>();
+        rigidBody.velocity = _bulletSpeed * transform.up;
+
     }
 
     private void FireBullet()
