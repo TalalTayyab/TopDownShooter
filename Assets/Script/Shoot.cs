@@ -13,12 +13,17 @@ public class Shoot : MonoBehaviour
     [SerializeField] private bool _multiShot;
     [SerializeField] private GameObject _bombPrefab;
     [SerializeField] private float _bombSpeed;
-    [SerializeField] private bool throwBomb;
+    [SerializeField] private bool _throwBomb;
+    [SerializeField] private bool _shootLaser;
+    [SerializeField] LineRenderer _lineRender;
     private float _lastfireTime;
     private bool _fireContiniously;
     private bool _fireSingle;
 
 
+    private void Awake()
+    {
+    }
     public void SetMultiShot(bool multiShot)
     {
         _multiShot = multiShot;
@@ -30,26 +35,74 @@ public class Shoot : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (_fireContiniously || _fireSingle)
         {
+            if (_shootLaser)
+            {
+                ShootLaser(true);
+            }
+
             float timeSinceLastFire = Time.time - _lastfireTime;
 
             if (timeSinceLastFire >= _timeBetweenShots)
             {
-                if (throwBomb)
+
+                if (_throwBomb)
                 {
                     ThrowBomb();
                 }
                 else
                 {
-                    FireBullet();
+                    // FireBullet();
                 }
 
                 _lastfireTime = Time.time;
                 _fireSingle = false;
             }
+        }
+        else
+        {
+            if (_shootLaser)
+            {
+                ShootLaser(false);
+            }
+        }
+    }
+
+    private void ShootLaser(bool drawLaser)
+    {
+
+
+        if (!drawLaser)
+        {
+            _lineRender.SetPosition(0, Vector3.zero);
+            _lineRender.SetPosition(1, Vector3.zero);
+        }
+        else
+        {
+            var layerMask = LayerMask.GetMask("Enemy");
+            var hitPoint = Physics2D.Raycast(_gunOffset.transform.position, _gunOffset.transform.up , 5f, layerMask);
+            var endPoint = _gunOffset.transform.position + (_gunOffset.transform.up * 5f);
+            if (hitPoint.collider != null)
+            {
+                var enemy = hitPoint.collider.gameObject.GetComponent<EnemyMovement>();
+                if (enemy != null)
+                {
+                    var health = hitPoint.collider.gameObject.GetComponent<HealthController>();
+                    endPoint = hitPoint.point;
+                    health.TakeDamage(10);
+
+                }
+
+            }
+            // Debug.DrawRay(_gunOffset.transform.position, endPoint, Color.green);
+            //Debug.DrawLine(_gunOffset.transform.position, endPoint, Color.yellow);
+            
+            _lineRender.SetPosition(0, _gunOffset.transform.position);
+            _lineRender.SetPosition(1, endPoint);
+
         }
     }
 

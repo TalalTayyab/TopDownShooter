@@ -5,20 +5,18 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField]
-    private float _speed = 1;
-    [SerializeField]
-    private float _rotationSpeed = 100;
-    [SerializeField]
-    private float _screenBorder;
+    [SerializeField] private float _speed = 1;
+    [SerializeField] private float _rotationSpeed = 100;
+    [SerializeField] private float _screenBorder;
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
     private Vector2 _targetDirection;
     private float _changeDirectionCoolDown;
     private Camera _camera;
-
-
+    
+    
+    
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -32,17 +30,17 @@ public class EnemyMovement : MonoBehaviour
     {
         UpdateTargetDirection();
         RotateTowardsTarget();
-        SetVelocity();
+        SetVelocity(); 
     }
 
     void UpdateTargetDirection()
     {
-        HandleRandomDirectionChange();
+        //HandleRandomDirectionChange();
         HandlePlayerTargetting();
         HandleEnemyOffScreen();
-
-
     }
+
+  
 
     private void HandleEnemyOffScreen()
     {
