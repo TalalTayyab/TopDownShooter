@@ -16,6 +16,7 @@ public class Shoot : MonoBehaviour
     [SerializeField] private bool _throwBomb;
     [SerializeField] private bool _shootLaser;
     [SerializeField] LineRenderer _lineRender;
+    [SerializeField] private float _laserLength;
     private float _lastfireTime;
     private bool _fireContiniously;
     private bool _fireSingle;
@@ -83,8 +84,8 @@ public class Shoot : MonoBehaviour
         else
         {
             var layerMask = LayerMask.GetMask("Enemy");
-            var hitPoint = Physics2D.Raycast(_gunOffset.transform.position, _gunOffset.transform.up , 5f, layerMask);
-            var endPoint = _gunOffset.transform.position + (_gunOffset.transform.up * 5f);
+            var hitPoint = Physics2D.Raycast(_gunOffset.transform.position, _gunOffset.transform.up , _laserLength, layerMask);
+            var endPoint = _gunOffset.transform.position + (_gunOffset.transform.up * _laserLength);
             if (hitPoint.collider != null)
             {
                 var enemy = hitPoint.collider.gameObject.GetComponent<EnemyMovement>();
@@ -99,7 +100,6 @@ public class Shoot : MonoBehaviour
             }
             // Debug.DrawRay(_gunOffset.transform.position, endPoint, Color.green);
             //Debug.DrawLine(_gunOffset.transform.position, endPoint, Color.yellow);
-            
             _lineRender.SetPosition(0, _gunOffset.transform.position);
             _lineRender.SetPosition(1, endPoint);
 
