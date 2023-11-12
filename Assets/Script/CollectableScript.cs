@@ -7,11 +7,13 @@ public class CollectableScript : MonoBehaviour
     [SerializeField] Sprite _healthSprite;
     [SerializeField] Sprite _multiweaponSprite;
     [SerializeField] Sprite _fastWeaponSprite;
+    [SerializeField] Sprite _bombWeaponSprite;
+    [SerializeField] Sprite _laserWeaponSprite;
     HealthController _playerHealthController;
     Shoot _playerShoot;
     CollectableTypeEnum _collectableType = CollectableTypeEnum.Health;
 
-    public enum CollectableTypeEnum { Health = 0, FastWeapon = 1 , MultiShot =2 };
+    public enum CollectableTypeEnum { Health = 0, FastWeapon = 1 , MultiShot =2, Bomb = 3, Laser = 4 };
     private void Awake()
     {
         _playerHealthController = FindObjectOfType<Player>().GetComponent<HealthController>();
@@ -34,6 +36,14 @@ public class CollectableScript : MonoBehaviour
             case CollectableTypeEnum.MultiShot:
                 _spriteRenderer.sprite = _multiweaponSprite;
                 break;
+
+            case CollectableTypeEnum.Bomb:
+                _spriteRenderer.sprite = _bombWeaponSprite;
+                break;
+
+            case CollectableTypeEnum.Laser:
+                _spriteRenderer.sprite = _laserWeaponSprite;
+                break;
         }
 
         _collectableType = collectableType;
@@ -53,6 +63,9 @@ public class CollectableScript : MonoBehaviour
             {
                 _playerShoot.SetTimeBetweenShots(0.5f);
                 _playerShoot.SetMultiShot(false);
+                _playerShoot.SetBomb(false);
+                _playerShoot.SetLaser(false);
+
 
             }
 
@@ -60,6 +73,24 @@ public class CollectableScript : MonoBehaviour
             {
                 _playerShoot.SetTimeBetweenShots(1f);
                 _playerShoot.SetMultiShot(true);
+                _playerShoot.SetBomb(false);
+                _playerShoot.SetLaser(false);
+            }
+
+            if (_collectableType == CollectableTypeEnum.Bomb)
+            {
+                _playerShoot.SetTimeBetweenShots(1f);
+                _playerShoot.SetBomb(true);
+                _playerShoot.SetMultiShot(false);
+                _playerShoot.SetLaser(false);
+            }
+
+            if (_collectableType == CollectableTypeEnum.Laser)
+            {
+                _playerShoot.SetTimeBetweenShots(1f);
+                _playerShoot.SetLaser(true);
+                _playerShoot.SetMultiShot(false);
+                _playerShoot.SetBomb(false);
             }
 
 

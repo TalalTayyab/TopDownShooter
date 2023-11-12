@@ -10,7 +10,7 @@ public class EnemyDestroyedController : MonoBehaviour
         Destroy(gameObject, delay);
 
         var collectableObj = Instantiate(_collectablePrefab, transform.position,Quaternion.Euler(0,0,0));
-        var rnd = Random.Range(0, 3);
+        var rnd = Random.Range(0, 5);
         if (rnd == 0)
         {
             collectableObj.GetComponent<CollectableScript>().SetCollectableType(CollectableScript.CollectableTypeEnum.Health);
@@ -19,9 +19,17 @@ public class EnemyDestroyedController : MonoBehaviour
         {
             collectableObj.GetComponent<CollectableScript>().SetCollectableType(CollectableScript.CollectableTypeEnum.FastWeapon);
         }
-        else
+        else if (rnd == 2)
         {
             collectableObj.GetComponent<CollectableScript>().SetCollectableType(CollectableScript.CollectableTypeEnum.MultiShot);
+        }
+        else if (rnd == 3)
+        {
+            collectableObj.GetComponent<CollectableScript>().SetCollectableType(CollectableScript.CollectableTypeEnum.Bomb);
+        }
+        else if (rnd == 4)
+        {
+            collectableObj.GetComponent<CollectableScript>().SetCollectableType(CollectableScript.CollectableTypeEnum.Laser);
         }
     }
  

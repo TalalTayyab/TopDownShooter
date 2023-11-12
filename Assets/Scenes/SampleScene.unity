@@ -744,10 +744,11 @@ MonoBehaviour:
   _bombPrefab: {fileID: 2441761948835377195, guid: 0d0db5ee53ae77843ab7193404071549, type: 3}
   _bombSpeed: 4
   _throwBomb: 0
-  _shootLaser: 1
+  _shootLaser: 0
   _lineRender: {fileID: 383067985}
   _laserLength: 10
   _laserMaxCharge: 5
+  _laserDamage: 1
   OnLaserChange:
     m_PersistentCalls:
       m_Calls:
@@ -961,7 +962,7 @@ LineRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Positions:
-  - {x: 8.77, y: 0, z: 1}
+  - {x: 0, y: 0, z: 1}
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3

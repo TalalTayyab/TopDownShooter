@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 1;
     [SerializeField] private float _rotationSpeed = 100;
     [SerializeField] private float _screenBorder;
+    [SerializeField] private GameObject _enemyHealthBar;
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
@@ -63,6 +65,7 @@ public class EnemyMovement : MonoBehaviour
         var targetRotation = Quaternion.LookRotation(transform.forward, _targetDirection);
         var rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         _rigidbody.SetRotation(rotation);
+        _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     private void SetVelocity()

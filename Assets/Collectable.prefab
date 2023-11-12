@@ -51,6 +51,8 @@ MonoBehaviour:
   _healthSprite: {fileID: 21300000, guid: 15acbe05489d45c468c28204c926709a, type: 3}
   _multiweaponSprite: {fileID: 21300000, guid: c37af62f241133247a505b42a151a092, type: 3}
   _fastWeaponSprite: {fileID: 21300000, guid: 19d9f007cc4e3514093b05d20651a5b7, type: 3}
+  _bombWeaponSprite: {fileID: 21300000, guid: a011ae774efa4734bad59e28a5079c8b, type: 3}
+  _laserWeaponSprite: {fileID: 21300000, guid: 9687b8cba872c4f50aeb3b2b3ff1a0b7, type: 3}
 --- !u!58 &6003165646768570181
 CircleCollider2D:
   m_ObjectHideFlags: 0

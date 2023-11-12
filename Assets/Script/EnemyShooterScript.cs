@@ -16,6 +16,7 @@ public class EnemyShooterScript : MonoBehaviour
     [SerializeField] private float _firingDelay;
     [SerializeField] private float _movingDelay;
     [SerializeField] private float _damageAmount;
+    [SerializeField] private GameObject _enemyHealthBar;
 
     private Rigidbody2D _rigidbody;
     private float _firingDelayCurrentValue;
@@ -72,6 +73,7 @@ public class EnemyShooterScript : MonoBehaviour
         RotateTowardsPlayer();
         _rigidbody.velocity = transform.up * _enemySpeed;
         //_rigidbody.velocity = transform.up * _enemySpeed * (_controller.DirectionToPlayer.magnitude);
+        _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
 

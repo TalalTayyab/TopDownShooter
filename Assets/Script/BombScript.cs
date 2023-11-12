@@ -49,7 +49,7 @@ public class BombScript : MonoBehaviour
             if (collider.GetComponent<EnemyMovement>())
             {
                 var healthController = collider.GetComponent<HealthController>();
-                healthController.TakeDamage(30);
+                healthController.TakeDamage(5);
             }
         }
         Destroy();

@@ -19,6 +19,7 @@ public class Shoot : MonoBehaviour
     [SerializeField] LineRenderer _lineRender;
     [SerializeField] private float _laserLength;
     [SerializeField] private float _laserMaxCharge;
+    [SerializeField] private float _laserDamage;
     public UnityEvent OnLaserChange;
     private float _lastfireTime;
     private bool _fireContiniously;
@@ -42,6 +43,16 @@ public class Shoot : MonoBehaviour
         _timeBetweenShots = time;
     }
 
+    public void SetBomb(bool throwBomb)
+    {
+        _throwBomb = throwBomb;
+    }
+
+    public void SetLaser(bool shootLaser)
+    {
+        _shootLaser = shootLaser;
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -63,7 +74,7 @@ public class Shoot : MonoBehaviour
                 }
                 else
                 {
-                    // FireBullet();
+                    FireBullet();
                 }
 
                 _lastfireTime = Time.time;
@@ -122,7 +133,7 @@ public class Shoot : MonoBehaviour
                 {
                     var health = hitPoint.collider.gameObject.GetComponent<HealthController>();
                     endPoint = hitPoint.point;
-                    health.TakeDamage(10);
+                    health.TakeDamage(_laserDamage);
 
                 }
 
