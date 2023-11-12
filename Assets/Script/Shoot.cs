@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class Shoot : MonoBehaviour
@@ -17,14 +18,20 @@ public class Shoot : MonoBehaviour
     [SerializeField] private bool _shootLaser;
     [SerializeField] LineRenderer _lineRender;
     [SerializeField] private float _laserLength;
+    [SerializeField] private float _laserMaxCharge;
+    public UnityEvent OnLaserChange;
     private float _lastfireTime;
     private bool _fireContiniously;
     private bool _fireSingle;
+    private float _laserCurrentCharge;
 
+    public float RemainingCharge => _laserCurrentCharge / _laserMaxCharge;
 
     private void Awake()
     {
+        _laserCurrentCharge = _laserMaxCharge;
     }
+
     public void SetMultiShot(bool multiShot)
     {
         _multiShot = multiShot;
@@ -70,21 +77,43 @@ public class Shoot : MonoBehaviour
                 ShootLaser(false);
             }
         }
+
+        OnLaserChange.Invoke();
+
+    }
+
+    private void HideLaser()
+    {
+        _lineRender.SetPosition(0, Vector3.zero);
+        _lineRender.SetPosition(1, Vector3.zero);
     }
 
     private void ShootLaser(bool drawLaser)
     {
-
-
         if (!drawLaser)
         {
-            _lineRender.SetPosition(0, Vector3.zero);
-            _lineRender.SetPosition(1, Vector3.zero);
+            HideLaser();
+
+            _laserCurrentCharge += Time.deltaTime;
+            if (_laserCurrentCharge > _laserMaxCharge)
+            {
+                _laserCurrentCharge = _laserMaxCharge;
+            }
+
         }
         else
         {
+            _laserCurrentCharge -= Time.deltaTime;
+
+            if (_laserCurrentCharge <= 0)
+            {
+                _laserCurrentCharge = 0;
+                HideLaser();
+                return;
+            }
+
             var layerMask = LayerMask.GetMask("Enemy");
-            var hitPoint = Physics2D.Raycast(_gunOffset.transform.position, _gunOffset.transform.up , _laserLength, layerMask);
+            var hitPoint = Physics2D.Raycast(_gunOffset.transform.position, _gunOffset.transform.up, _laserLength, layerMask);
             var endPoint = _gunOffset.transform.position + (_gunOffset.transform.up * _laserLength);
             if (hitPoint.collider != null)
             {
