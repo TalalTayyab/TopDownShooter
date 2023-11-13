@@ -1378,6 +1378,10 @@ PrefabInstance:
       propertyPath: _minSpawnTime
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _misslePrefab
+      value: 
+      objectReference: {fileID: 4618717388525573202, guid: 5987dd2a6a52feb439a8c9094eb529a9, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (3)
@@ -1780,6 +1784,10 @@ PrefabInstance:
       propertyPath: _maxSpawnTime
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _misslePrefab
+      value: 
+      objectReference: {fileID: 4618717388525573202, guid: 5987dd2a6a52feb439a8c9094eb529a9, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (2)
@@ -1996,6 +2004,10 @@ PrefabInstance:
       propertyPath: _minSpawnTime
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _misslePrefab
+      value: 
+      objectReference: {fileID: 4618717388525573202, guid: 5987dd2a6a52feb439a8c9094eb529a9, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (1)
@@ -2132,6 +2144,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _misslePrefab
+      value: 
+      objectReference: {fileID: 4618717388525573202, guid: 5987dd2a6a52feb439a8c9094eb529a9, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner

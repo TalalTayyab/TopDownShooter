@@ -7,6 +7,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private float _minSpawnTime;
     [SerializeField] private float _maxSpawnTime;
+    [SerializeField] private GameObject _misslePrefab;
     private Transform _playerTransform;
     //private Vector3 _delta;
     private float _timeUntilSpawn;
@@ -15,12 +16,12 @@ public class EnemySpawner : MonoBehaviour
     {
         SetTimeUntilSpawn();
         _playerTransform = FindObjectOfType<Player>().transform;
-      //  _delta = transform.position - _playerTransform.transform.position;
+        //  _delta = transform.position - _playerTransform.transform.position;
     }
 
     //private void FixedUpdate()
     //{
-          // move with player
+    // move with player
     //    transform.position = new Vector3(_playerTransform.position.x + _delta.x, _playerTransform.position.y + _delta.y, transform.position.z);
 
     //}
@@ -30,6 +31,7 @@ public class EnemySpawner : MonoBehaviour
     {
 
         _timeUntilSpawn -= Time.deltaTime;
+        var position = transform.position;
 
         if (_timeUntilSpawn <= 0)
         {
@@ -48,7 +50,13 @@ public class EnemySpawner : MonoBehaviour
                 prefab.GetComponent<HealthController>().SetMaxHealth(Random.Range(20,60));
             }
 
-            Instantiate(prefab, transform.position, Quaternion.identity);
+            if (rnd == 5)
+            {
+                prefab = _misslePrefab;
+                position = _playerTransform.transform.position;
+            }
+
+            Instantiate(prefab, position, Quaternion.identity);
             SetTimeUntilSpawn();
         }
     }

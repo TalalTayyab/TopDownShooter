@@ -51,6 +51,7 @@ public class Shoot : MonoBehaviour
     public void SetLaser(bool shootLaser)
     {
         _shootLaser = shootLaser;
+        _laserCurrentCharge = _laserMaxCharge;
     }
 
     // Update is called once per frame
