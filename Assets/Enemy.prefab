@@ -357,7 +357,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8131862494645995654}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72e5c94ebd8fa804385acc82e2254eb7, type: 3}
   m_Name: 
@@ -460,8 +460,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12fdbd7a9f9e4f446a7c64c75c04edbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentHealth: 21
-  _maximumHealth: 21
+  _currentHealth: 10
+  _maximumHealth: 10
   OnDied:
     m_PersistentCalls:
       m_Calls:
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8131862494645995654}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6ded7a9890caf249994d1fd2ae5a62b, type: 3}
   m_Name: 
@@ -711,7 +711,7 @@ SpriteRenderer:
   m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 1569601302, guid: 941f78e4af1c9a642a6a721fd02833ed, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

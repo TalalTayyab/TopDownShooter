@@ -20,7 +20,7 @@ public class MissleScript : MonoBehaviour
         _camera = Camera.main;
         transform.position = _player.transform.position;
         
-        var pos = _camera.ScreenToWorldPoint(new Vector3(transform.position.x, _camera.pixelHeight, transform.position.z));
+        var pos = _camera.ScreenToWorldPoint(new Vector3(transform.position.x, _camera.pixelHeight + 32, transform.position.z));
         _missleSprite.transform.position = new Vector3(transform.position.x, pos.y, transform.position.z);
     }
 
