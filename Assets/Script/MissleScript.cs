@@ -16,9 +16,12 @@ public class MissleScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _player = GameObject.Find("Player");
+        _camera = Camera.main;
         transform.position = _player.transform.position;
-        _missleSprite.transform.position = new Vector3(transform.position.x, 22f, transform.position.z);
-
+        
+        var pos = _camera.ScreenToWorldPoint(new Vector3(transform.position.x, _camera.pixelHeight, transform.position.z));
+        _missleSprite.transform.position = new Vector3(transform.position.x, pos.y, transform.position.z);
     }
 
     // Update is called once per frame
@@ -26,16 +29,27 @@ public class MissleScript : MonoBehaviour
     {
         if (_shadow.transform.localScale.x <= _scaleLimit || _shadow.transform.localScale.y <= _scaleLimit)
         {
-            Destroy(gameObject);
-            var explosion = Instantiate(_explosionPrefab, transform.position, transform.rotation);
-            Explode();
-            Destroy(explosion, 1);
+            StartCoroutine(BombDrop());
+           
         }
         else
         {
             _shadow.transform.localScale = new Vector3(_shadow.transform.localScale.x - Time.deltaTime, _shadow.transform.localScale.y - Time.deltaTime, _shadow.transform.localScale.z);
-            _missleSprite.transform.position = new Vector3(_missleSprite.transform.position.x, _missleSprite.transform.position.y - (Time.deltaTime+ 0.15f), _missleSprite.transform.position.z);
         }
+    }
+
+    IEnumerator BombDrop()
+    {
+        while (_missleSprite.transform.position.y >= transform.position.y)
+        {
+            _missleSprite.transform.position = new Vector3(_missleSprite.transform.position.x, _missleSprite.transform.position.y - 1, _missleSprite.transform.position.z);
+            yield return new WaitForSeconds(0.1f);
+        }
+        Destroy(gameObject);
+        var explosion = Instantiate(_explosionPrefab, transform.position, transform.rotation);
+        Explode();
+        Destroy(explosion, 1);
+
     }
 
     private void Explode()
