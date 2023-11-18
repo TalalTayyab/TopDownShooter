@@ -1,20 +1,23 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private GameObject _damagePrefab;
+    [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _rotationSpeed;
+    [SerializeField] private float _screenBorder;
+    [SerializeField] private float _dashSpeed;
+    [SerializeField] private float _dashDelay;
+
     private Rigidbody2D _rigidbody2;
     private Vector2 _movementInput;
-    [SerializeField]
-    private float _speed = 5f;
     private Vector2 _smoothMovement;
     private Vector2 _currentVelocity;
-    [SerializeField]
-    private float _rotationSpeed;
-    [SerializeField]
-    private float _screenBorder;
     private Camera _camera;
     private Animator _animator;
+    private bool isDashing;
 
     private void Awake()
     {
@@ -23,12 +26,44 @@ public class Player : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
+    private void Update()
+    {
+        _movementInput.x = Input.GetAxisRaw("Horizontal");
+        _movementInput.y = Input.GetAxisRaw("Vertical");
+
+        if (isDashing)
+        {
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+           
+            StartCoroutine(Dash());
+            return;
+        }
+    }
+
     private void FixedUpdate()
     {
-        SetVelocity();
+        if (!isDashing)
+        {
+            SetVelocity();
+        }
+        
         //RotationInDirectionOfInput();
         RotateInDirectionOfMouse();
         SetAnimation();
+    }
+
+    private IEnumerator Dash()
+    {
+        isDashing = true;
+        Debug.Log("dash start");
+        _rigidbody2.velocity = new Vector2(_movementInput.x * _dashSpeed, _movementInput.y * _dashSpeed);
+        yield return new WaitForSeconds(_dashDelay);
+        isDashing = false;
+        Debug.Log("dash end");
     }
 
     private void SetVelocity()
@@ -61,10 +96,16 @@ public class Player : MonoBehaviour
         _animator.SetBool("IsMoving", isMoving);
     }
 
-    private void OnMove(InputValue inputValue)
+    public void TakeDamage()
     {
-        _movementInput = inputValue.Get<Vector2>();
+        var damage = Instantiate(_damagePrefab, transform);
+        Destroy(damage, 0.5f);
     }
+
+    //private void OnMove(InputValue inputValue)
+    //{
+    //    _movementInput = inputValue.Get<Vector2>();
+    //}
 
     private void RotationInDirectionOfInput()
     {
