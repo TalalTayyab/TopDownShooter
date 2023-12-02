@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
    
     private Transform _playerTransform;
     private float _timeUntilSpawn;
+    private Vector3 _delta;
     
 
 
@@ -21,7 +22,6 @@ public class EnemySpawner : MonoBehaviour
     {
         SetTimeUntilSpawn();
         _playerTransform = FindObjectOfType<Player>().transform;
-        //  _delta = transform.position - _playerTransform.transform.position;
         if (Location == 0) //left-mid
         {
             var pos = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, transform.position.z));
@@ -42,15 +42,15 @@ public class EnemySpawner : MonoBehaviour
             var pos = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight, transform.position.z));
             transform.position = new Vector3(0, (pos.y*-1)- 1, transform.position.z);
         }
+        _delta = transform.position - _playerTransform.transform.position;
 
     }
 
-    //private void FixedUpdate()
-    //{
+    private void FixedUpdate()
+    {
     // move with player
-    //    transform.position = new Vector3(_playerTransform.position.x + _delta.x, _playerTransform.position.y + _delta.y, transform.position.z);
-
-    //}
+        transform.position = new Vector3(_playerTransform.position.x + _delta.x, _playerTransform.position.y + _delta.y, transform.position.z);
+    }
 
     // Update is called once per frame
     void Update()

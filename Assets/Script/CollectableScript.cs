@@ -62,6 +62,7 @@ public class CollectableScript : MonoBehaviour
             if (_collectableType == CollectableTypeEnum.FastWeapon)
             {
                 _playerShoot.SetTimeBetweenShots(0.5f);
+                _playerShoot.SetFireGun(true);
                 _playerShoot.SetMultiShot(false);
                 _playerShoot.SetBomb(false);
                 _playerShoot.SetLaser(false);
@@ -73,8 +74,10 @@ public class CollectableScript : MonoBehaviour
             {
                 _playerShoot.SetTimeBetweenShots(1f);
                 _playerShoot.SetMultiShot(true);
+                _playerShoot.SetFireGun(true);
                 _playerShoot.SetBomb(false);
                 _playerShoot.SetLaser(false);
+                
             }
 
             if (_collectableType == CollectableTypeEnum.Bomb)
@@ -83,6 +86,7 @@ public class CollectableScript : MonoBehaviour
                 _playerShoot.SetBomb(true);
                 _playerShoot.SetMultiShot(false);
                 _playerShoot.SetLaser(false);
+                _playerShoot.SetFireGun(false);
             }
 
             if (_collectableType == CollectableTypeEnum.Laser)
@@ -91,6 +95,7 @@ public class CollectableScript : MonoBehaviour
                 _playerShoot.SetLaser(true);
                 _playerShoot.SetMultiShot(false);
                 _playerShoot.SetBomb(false);
+                _playerShoot.SetFireGun(false);
             }
 
 

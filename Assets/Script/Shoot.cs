@@ -16,21 +16,26 @@ public class Shoot : MonoBehaviour
     [SerializeField] private float _bombSpeed;
     [SerializeField] private bool _throwBomb;
     [SerializeField] private bool _shootLaser;
+    [SerializeField] private bool _fireGun;
     [SerializeField] LineRenderer _lineRender;
     [SerializeField] private float _laserLength;
     [SerializeField] private float _laserMaxCharge;
     [SerializeField] private float _laserDamage;
+    [SerializeField] private float _shootDelay;
     public UnityEvent OnLaserChange;
     private float _lastfireTime;
     private bool _fireContiniously;
     private bool _fireSingle;
     private float _laserCurrentCharge;
+    private float _timeUntilShoot;
 
     public float RemainingCharge => _laserCurrentCharge / _laserMaxCharge;
 
     private void Awake()
     {
         _laserCurrentCharge = _laserMaxCharge;
+        _fireGun = true;
+        _timeUntilShoot = _shootDelay;
     }
 
     public void SetMultiShot(bool multiShot)
@@ -48,6 +53,11 @@ public class Shoot : MonoBehaviour
         _throwBomb = throwBomb;
     }
 
+    public void SetFireGun(bool fireGun)
+    {
+        _fireGun = fireGun;
+    }
+
     public void SetLaser(bool shootLaser)
     {
         _shootLaser = shootLaser;
@@ -56,6 +66,25 @@ public class Shoot : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
+    {
+
+        _timeUntilShoot -= Time.deltaTime;
+
+        if (_timeUntilShoot <= 0)
+        {
+            if (_throwBomb)
+            {
+                ThrowBomb();
+            }
+            {
+                FireBullet();
+            }
+
+            _timeUntilShoot = _shootDelay;
+        }
+    }
+
+    private void ButtonFire()
     {
         if (_fireContiniously || _fireSingle)
         {
@@ -73,7 +102,7 @@ public class Shoot : MonoBehaviour
                 {
                     ThrowBomb();
                 }
-                else
+                else if (_fireGun)
                 {
                     FireBullet();
                 }
@@ -91,7 +120,6 @@ public class Shoot : MonoBehaviour
         }
 
         OnLaserChange.Invoke();
-
     }
 
     private void HideLaser()
