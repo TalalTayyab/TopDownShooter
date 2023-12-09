@@ -11,7 +11,7 @@ TagManager:
   - Enemy
   - Water
   - UI
-  - 
+  - Trees
   - 
   - 
   - 
@@ -43,6 +43,9 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 1393588669
+    locked: 0
+  - name: Trees
+    uniqueID: 2176818071
     locked: 0
   - name: Collectables
     uniqueID: 568491353

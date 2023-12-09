@@ -20,6 +20,11 @@ public class Bullet : MonoBehaviour
             healthController.TakeDamage(5);
             Destroy(gameObject);
         }
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Trees"))
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Update()
