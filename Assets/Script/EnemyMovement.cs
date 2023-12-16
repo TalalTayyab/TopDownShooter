@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class EnemyMovement : MonoBehaviour
@@ -10,21 +11,25 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 100;
     [SerializeField] private float _screenBorder;
     [SerializeField] private GameObject _enemyHealthBar;
+    [SerializeField] private bool _animateDirection;
+    [SerializeField] private GameObject _graphics;
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
     private Vector2 _targetDirection;
     private float _changeDirectionCoolDown;
     private Camera _camera;
-    
-    
-    
+    private Animator _animator;
+    private Quaternion _rotation;
+
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _controller = GetComponent<PlayerAwarenessController>();
         _targetDirection = transform.up;
         _camera = Camera.main;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -35,11 +40,20 @@ public class EnemyMovement : MonoBehaviour
         SetVelocity(); 
     }
 
+    private void LateUpdate()
+    {
+        if (_animateDirection)
+        {
+            _graphics.transform.rotation = _rotation;
+
+        }
+    }
+
     void UpdateTargetDirection()
     {
         //HandleRandomDirectionChange();
         HandlePlayerTargetting();
-        HandleEnemyOffScreen();
+      //  HandleEnemyOffScreen();
     }
 
   
@@ -62,6 +76,38 @@ public class EnemyMovement : MonoBehaviour
 
     private void RotateTowardsTarget()
     {
+       
+        if (_animateDirection)
+        {
+            float x =0, y = 0;
+
+            //left
+            if (_controller.DirectionToPlayer.x < 0)
+            {
+                x = -1;
+            }
+            if (_controller.DirectionToPlayer.x > 0)
+            {
+                x = 1;
+            }
+            if (_controller.DirectionToPlayer.y < 0)
+            {
+                y = 1;
+            }
+            if (_controller.DirectionToPlayer.y > 0)
+            {
+                y = -1;
+            }
+
+            if (x !=0 && y != 0)
+            {
+                _animator.SetFloat("MovementX", _controller.DirectionToPlayer.x);
+                _animator.SetFloat("MovementY", _controller.DirectionToPlayer.y);
+            }
+
+            _rotation = _graphics.transform.rotation;
+        }
+
         var targetRotation = Quaternion.LookRotation(transform.forward, _targetDirection);
         var rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         _rigidbody.SetRotation(rotation);
