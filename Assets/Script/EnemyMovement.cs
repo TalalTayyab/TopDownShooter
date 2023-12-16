@@ -37,7 +37,7 @@ public class EnemyMovement : MonoBehaviour
     {
         UpdateTargetDirection();
         RotateTowardsTarget();
-        SetVelocity(); 
+        SetVelocity();
     }
 
     private void LateUpdate()
@@ -56,7 +56,13 @@ public class EnemyMovement : MonoBehaviour
       //  HandleEnemyOffScreen();
     }
 
-  
+    public void Attack(bool attacking)
+    {
+        if (_animateDirection)
+        {
+            _animator.SetBool("Attacking", attacking);
+        }
+    }
 
     private void HandleEnemyOffScreen()
     {
@@ -79,27 +85,7 @@ public class EnemyMovement : MonoBehaviour
        
         if (_animateDirection)
         {
-            float x =0, y = 0;
-
-            //left
-            if (_controller.DirectionToPlayer.x < 0)
-            {
-                x = -1;
-            }
-            if (_controller.DirectionToPlayer.x > 0)
-            {
-                x = 1;
-            }
-            if (_controller.DirectionToPlayer.y < 0)
-            {
-                y = 1;
-            }
-            if (_controller.DirectionToPlayer.y > 0)
-            {
-                y = -1;
-            }
-
-            if (x !=0 && y != 0)
+            if (_controller.DirectionToPlayer.x != 0 && _controller.DirectionToPlayer.y != 0)
             {
                 _animator.SetFloat("MovementX", _controller.DirectionToPlayer.x);
                 _animator.SetFloat("MovementY", _controller.DirectionToPlayer.y);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerAwarenessController : MonoBehaviour
 {
     public bool AwareOfPlayer {get; private set;}
+    
     public Vector3 DirectionToPlayer { get; private set;}
     [SerializeField]
     private float _playerAwarenessDistance;

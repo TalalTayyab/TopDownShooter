@@ -1991,7 +1991,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8239783514096644843, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_LocalPosition.x
@@ -117013,7 +117013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8239783514096644843, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_LocalPosition.x
@@ -117398,7 +117398,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6768563256118197544, guid: e511a354b66691247a0898d7a8b0a215, type: 3}
       propertyPath: _speed
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6768563256118197544, guid: e511a354b66691247a0898d7a8b0a215, type: 3}
       propertyPath: _graphics
@@ -117447,6 +117447,10 @@ PrefabInstance:
     - target: {fileID: 8131862494645995654, guid: e511a354b66691247a0898d7a8b0a215, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8131862494645995654, guid: e511a354b66691247a0898d7a8b0a215, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -118157,6 +118161,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damageAmount: 1
+  OnEnterCloseAttack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1280234262}
+        m_TargetAssemblyTypeName: EnemyMovement, Assembly-CSharp
+        m_MethodName: Attack
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  OnLeaveCloseAttack:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1280234262}
+        m_TargetAssemblyTypeName: EnemyMovement, Assembly-CSharp
+        m_MethodName: Attack
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1280234266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118195,14 +118229,98 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12fdbd7a9f9e4f446a7c64c75c04edbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentHealth: 10
-  _maximumHealth: 10
+  _currentHealth: 30
+  _maximumHealth: 30
   OnDied:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 521331893}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1280234262}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 769851684}
+        m_TargetAssemblyTypeName: EnemyHealthBar, Assembly-CSharp
+        m_MethodName: Destroyed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1280234267}
+        m_TargetAssemblyTypeName: EnemyDestroyedController, Assembly-CSharp
+        m_MethodName: DestoryEnemy
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 1
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1280234266}
+        m_TargetAssemblyTypeName: EnemyScoreAllocator, Assembly-CSharp
+        m_MethodName: AllocateScore
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 1
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1280234264}
+        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 1
+          m_StringArgument: OnDied
+          m_BoolArgument: 0
+        m_CallState: 2
   OnDamage:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 769851684}
+        m_TargetAssemblyTypeName: EnemyHealthBar, Assembly-CSharp
+        m_MethodName: UpdateCharge
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1280234268}
+          m_ObjectArgumentAssemblyTypeName: HealthController, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnHealthChange:
     m_PersistentCalls:
       m_Calls: []
@@ -118224,7 +118342,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8239783514096644843, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_LocalPosition.x
@@ -119709,7 +119827,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8239783514096644843, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_LocalPosition.x
@@ -120029,6 +120147,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damageAmount: 5
+  OnEnterCloseAttack:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLeaveCloseAttack:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!58 &1979609511
 CircleCollider2D:
   m_ObjectHideFlags: 0

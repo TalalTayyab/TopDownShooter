@@ -366,6 +366,8 @@ MonoBehaviour:
   _rotationSpeed: 200
   _screenBorder: -30
   _enemyHealthBar: {fileID: 1525941464157242201}
+  _animateDirection: 0
+  _graphics: {fileID: 0}
 --- !u!114 &6263836016078437368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,6 +429,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damageAmount: 10
+  OnEnterCloseAttack:
+    m_PersistentCalls:
+      m_Calls: []
+  OnLeaveCloseAttack:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!95 &425880200858068010
 Animator:
   serializedVersion: 5
