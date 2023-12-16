@@ -6,15 +6,17 @@ using UnityEngine.UIElements;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject _dogPrefab;
+    [SerializeField] private GameObject _frogPrefab;
     [SerializeField] private float _minSpawnTime;
     [SerializeField] private float _maxSpawnTime;
     [SerializeField] private GameObject _misslePrefab;
     [SerializeField] private int Location;
-   
+
     private Transform _playerTransform;
     private float _timeUntilSpawn;
     private Vector3 _delta;
-    
+
 
 
     // Start is called before the first frame update
@@ -35,12 +37,12 @@ public class EnemySpawner : MonoBehaviour
         if (Location == 2) //top-mid
         {
             var pos = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight, transform.position.z));
-            transform.position = new Vector3(0, pos.y+1, transform.position.z);
+            transform.position = new Vector3(0, pos.y + 1, transform.position.z);
         }
         if (Location == 3) //bottom-mid
         {
             var pos = Camera.main.ScreenToWorldPoint(new Vector3(0, Camera.main.pixelHeight, transform.position.z));
-            transform.position = new Vector3(0, (pos.y*-1)- 1, transform.position.z);
+            transform.position = new Vector3(0, (pos.y * -1) - 1, transform.position.z);
         }
         _delta = transform.position - _playerTransform.transform.position;
 
@@ -48,7 +50,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void FixedUpdate()
     {
-    // move with player
+        // move with player
         transform.position = new Vector3(_playerTransform.position.x + _delta.x, _playerTransform.position.y + _delta.y, transform.position.z);
     }
 
@@ -59,21 +61,21 @@ public class EnemySpawner : MonoBehaviour
 
         if (_timeUntilSpawn <= 0)
         {
-            SpawnEnemy();
+            Spawn();
         }
     }
 
     void SpawnEnemy()
     {
-        var position = transform.position;
+        var rnd = Random.Range(0, 8);
+
         var prefab = _enemyPrefab;
         prefab.GetComponent<EnemyShooterScript>().enabled = false;
         prefab.GetComponent<EnemyMovement>().enabled = true;
         prefab.GetComponentInChildren<SpriteRenderer>().color = Color.white;
         prefab.GetComponent<HealthController>().SetMaxHealth(10);
 
-        var rnd = Random.Range(0, 8);
-        if (rnd == 3)
+        if (rnd == 5)
         {
             prefab.GetComponent<EnemyMovement>().enabled = false;
             prefab.GetComponent<EnemyShooterScript>().enabled = true;
@@ -81,13 +83,56 @@ public class EnemySpawner : MonoBehaviour
             prefab.GetComponent<HealthController>().SetMaxHealth(Random.Range(20, 60));
         }
 
-        if (rnd == 5)
-        {
-            prefab = _misslePrefab;
-            position = _playerTransform.transform.position;
-        }
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
 
+    void SpawnMissle()
+    {
+        var prefab = _misslePrefab;
+        var position = _playerTransform.transform.position;
         Instantiate(prefab, position, Quaternion.identity);
+    }
+
+    void SpawnDog()
+    {
+        var prefab = _dogPrefab;
+        prefab.GetComponent<EnemyMovement>().enabled = true;
+        prefab.GetComponent<EnemyMovement>()._speed = 4.5f;
+        prefab.GetComponent<HealthController>().SetMaxHealth(10);
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
+
+    void SpawnFrog()
+    {
+        var prefab = _frogPrefab;
+        var pp = _playerTransform.position;
+        var position = new Vector3(pp.x + Random.Range(-10f, +10f), pp.y + Random.Range(-10f, 10f), pp.z);
+        prefab.GetComponent<HealthController>().SetMaxHealth(20);
+        Instantiate(prefab, position, Quaternion.identity);
+    }
+
+
+    void Spawn()
+    {
+        var rnd = Random.Range(0, 8);
+        switch (rnd)
+        {
+            case 2:
+                SpawnFrog();
+                break;
+
+            case 5:
+                SpawnMissle();
+                break;
+
+            case 3:
+                SpawnDog();
+                break;
+
+            default:
+                SpawnEnemy();
+                break;
+        }
 
         SetTimeUntilSpawn();
     }

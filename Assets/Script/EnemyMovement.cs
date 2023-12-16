@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private float _speed = 1;
+    [SerializeField] public float _speed = 1;
     [SerializeField] private float _rotationSpeed = 100;
     [SerializeField] private float _screenBorder;
     [SerializeField] private GameObject _enemyHealthBar;
@@ -35,6 +35,8 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
+        if (_speed == 0) return;
+
         UpdateTargetDirection();
         RotateTowardsTarget();
         SetVelocity();

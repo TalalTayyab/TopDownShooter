@@ -5,6 +5,7 @@ public class CollectableScript : MonoBehaviour
 {
     [SerializeField] private float _autoDestoryTime;
     [SerializeField] private Animator _animator;
+    [SerializeField] private float _speed;
     HealthController _playerHealthController;
     GameObject _player;
     bool hasCollided;
@@ -23,7 +24,7 @@ public class CollectableScript : MonoBehaviour
     {
         if (hasCollided)
         {
-            transform.position = Vector3.Slerp( transform.position, _player.transform.position, 0.2f);
+            transform.position = Vector3.Slerp( transform.position, _player.transform.position, _speed);
 
             var diff = transform.position - _player.transform.position;
             if (Mathf.Abs(diff.magnitude) < 0.4f)
@@ -39,7 +40,7 @@ public class CollectableScript : MonoBehaviour
         if (collision.GetComponent<Player>())
         {
             hasCollided = true;
-            //_animator.SetBool("IsCollected", true);
+            _animator.SetBool("IsCollected", true);
             //Destroy(gameObject,1);
         }
     }
