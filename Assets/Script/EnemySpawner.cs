@@ -8,6 +8,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private GameObject _dogPrefab;
     [SerializeField] private GameObject _frogPrefab;
+    [SerializeField] private GameObject _eyePrefab;
     [SerializeField] private float _minSpawnTime;
     [SerializeField] private float _maxSpawnTime;
     [SerializeField] private GameObject _misslePrefab;
@@ -75,14 +76,12 @@ public class EnemySpawner : MonoBehaviour
         prefab.GetComponentInChildren<SpriteRenderer>().color = Color.white;
         prefab.GetComponent<HealthController>().SetMaxHealth(10);
 
-        if (rnd == 5)
-        {
-            prefab.GetComponent<EnemyMovement>().enabled = false;
-            prefab.GetComponent<EnemyShooterScript>().enabled = true;
-            prefab.GetComponentInChildren<SpriteRenderer>().color = Color.red;
-            prefab.GetComponent<HealthController>().SetMaxHealth(Random.Range(20, 60));
-        }
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
 
+    void SpawnEye()
+    {
+        var prefab = _eyePrefab;
         Instantiate(prefab, transform.position, Quaternion.identity);
     }
 
@@ -121,12 +120,16 @@ public class EnemySpawner : MonoBehaviour
                 SpawnFrog();
                 break;
 
-            case 5:
-                SpawnMissle();
-                break;
-
             case 3:
                 SpawnDog();
+                break;
+
+            case 7:
+                SpawnEye();
+                break;
+
+            case 5:
+                SpawnMissle();
                 break;
 
             default:

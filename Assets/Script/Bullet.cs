@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float _autoDestoryTime;
+    [SerializeField] private GameObject _damagePrefab;
     private Camera _camera;
     
     private void Awake()
@@ -14,17 +15,41 @@ public class Bullet : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<EnemyMovement>())
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+
         {
             var healthController = collision.GetComponent<HealthController>();
-            healthController.TakeDamage(5);
+            var damage = Random.Range(3, 10);
+            var isCriticalHit = IsCriticalHit(ref damage);
+            healthController.TakeDamage(damage);
             Destroy(gameObject);
+
+            DamagePopUp(collision.transform.position, damage, isCriticalHit);
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Trees"))
         {
             Destroy(gameObject);
         }
+    }
+
+    private bool IsCriticalHit(ref int damage)
+    {
+        var range = Random.Range(1, 6);
+        if (range == 3)
+        {
+            var modifier = Random.Range(3, 10);
+            damage = damage + modifier;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void DamagePopUp(Vector3 position, int damageAmount, bool isCriticalHit)
+    {
+        var dp = Instantiate(_damagePrefab, position, Quaternion.identity);
+        dp.GetComponent<DamagePopUpScript>().Setup(damageAmount, isCriticalHit);
     }
 
     private void Update()
