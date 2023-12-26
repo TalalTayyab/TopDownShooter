@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private GameObject _slimePrefab;
     [SerializeField] private GameObject _dogPrefab;
     [SerializeField] private GameObject _frogPrefab;
     [SerializeField] private GameObject _eyePrefab;
@@ -68,8 +69,6 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        var rnd = Random.Range(0, 8);
-
         var prefab = _enemyPrefab;
         prefab.GetComponent<EnemyShooterScript>().enabled = false;
         prefab.GetComponent<EnemyMovement>().enabled = true;
@@ -110,12 +109,22 @@ public class EnemySpawner : MonoBehaviour
         Instantiate(prefab, position, Quaternion.identity);
     }
 
+    void SpawnSlime()
+    {
+        var prefab = _slimePrefab;
+        Instantiate(prefab, transform.position, Quaternion.identity);
+    }
+
 
     void Spawn()
     {
         var rnd = Random.Range(0, 8);
         switch (rnd)
         {
+            case 1:
+                SpawnSlime();
+                break;
+
             case 2:
                 SpawnFrog();
                 break;

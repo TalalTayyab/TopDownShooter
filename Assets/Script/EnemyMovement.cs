@@ -15,6 +15,16 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private GameObject _graphics;
     [SerializeField] private bool _flip;
     [SerializeField] private SpriteRenderer _spriteRender;
+    [SerializeField] private bool _dontRoateGraphics;
+    [SerializeField] private bool _shoot;
+    
+    [SerializeField] private GameObject _enemyBullet;
+    [SerializeField] private float _bulletSpeed;
+    [SerializeField] private float _enemySpeed;
+    [SerializeField] private float _firingDelay;
+    [SerializeField] private float _movingDelay;
+    [SerializeField] private int _damageAmount;
+    
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
@@ -24,7 +34,12 @@ public class EnemyMovement : MonoBehaviour
     private Animator _animator;
     private Quaternion _rotation;
     private bool rightFacing = true;
-   
+
+    private float _firingDelayCurrentValue;
+    private float _movingDelayCurrentValue;
+    enum EnemyState { Moving = 0, Firing = 1 };
+    private EnemyState _state = EnemyState.Moving;
+
 
     private void Awake()
     {
@@ -33,11 +48,21 @@ public class EnemyMovement : MonoBehaviour
         _targetDirection = transform.up;
         _camera = Camera.main;
         _animator = GetComponentInChildren<Animator>();
+
+        _firingDelayCurrentValue = _firingDelay;
+        _movingDelayCurrentValue = _movingDelay;
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
+
+        if (_shoot)
+        {
+            MoveAndShoot();
+            return;
+        }
+
         Flip();
 
         if (_speed == 0) return;
@@ -46,6 +71,59 @@ public class EnemyMovement : MonoBehaviour
         RotateTowardsTarget();
         SetVelocity();
     }
+
+    private void MoveAndShoot()
+    {
+        switch (_state)
+        {
+            case EnemyState.Firing:
+                Fire();
+                break;
+
+            case EnemyState.Moving:
+                Move();
+                break;
+        }
+    }
+
+    private void Move()
+    {
+        _movingDelayCurrentValue -= Time.deltaTime;
+
+        if (_movingDelayCurrentValue < 0)
+        {
+            _state = EnemyState.Firing;
+            _movingDelayCurrentValue = _movingDelay;
+            return;
+
+        }
+
+        UpdateTargetDirection();
+        RotateTowardsTarget();
+        _rigidbody.velocity = transform.up * _enemySpeed;
+        //_rigidbody.velocity = transform.up * _enemySpeed * (_controller.DirectionToPlayer.magnitude);
+        _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    private void Fire()
+    {
+        if (_firingDelayCurrentValue == _firingDelay)
+        {
+            var bullet = Instantiate(_enemyBullet, transform.position, transform.rotation);
+            var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
+            ridigBody2d.velocity = transform.up * _bulletSpeed;
+        }
+
+        _firingDelayCurrentValue -= Time.deltaTime;
+
+        if (_firingDelayCurrentValue <= 0)
+        {
+            _state = EnemyState.Moving;
+            _firingDelayCurrentValue = _firingDelay;
+        }
+
+    }
+
 
     private void Flip()
     {
@@ -77,6 +155,7 @@ public class EnemyMovement : MonoBehaviour
             _graphics.transform.rotation = _rotation;
 
         }
+
     }
 
     void UpdateTargetDirection()
@@ -128,6 +207,13 @@ public class EnemyMovement : MonoBehaviour
         var rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         _rigidbody.SetRotation(rotation);
         _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
+
+
+        if (_dontRoateGraphics)
+        {
+            _graphics.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+
     }
 
     private void SetVelocity()
@@ -154,4 +240,6 @@ public class EnemyMovement : MonoBehaviour
             _targetDirection = _controller.DirectionToPlayer.normalized;
         }
     }
+
+
 }

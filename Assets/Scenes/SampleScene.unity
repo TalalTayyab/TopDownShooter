@@ -1965,6 +1965,10 @@ PrefabInstance:
       propertyPath: _frogPrefab
       value: 
       objectReference: {fileID: 3752031700876284364, guid: f4e2dfa1ac2409e42b68f98a85bad0ff, type: 3}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _slimePrefab
+      value: 
+      objectReference: {fileID: 8131862494645995654, guid: 53d2f68935b6ba547a6a06ed553ee507, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner-Right
@@ -116567,6 +116571,10 @@ PrefabInstance:
       propertyPath: _frogPrefab
       value: 
       objectReference: {fileID: 3752031700876284364, guid: f4e2dfa1ac2409e42b68f98a85bad0ff, type: 3}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _slimePrefab
+      value: 
+      objectReference: {fileID: 8131862494645995654, guid: 53d2f68935b6ba547a6a06ed553ee507, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner-Top
@@ -117492,6 +117500,10 @@ PrefabInstance:
       propertyPath: _frogPrefab
       value: 
       objectReference: {fileID: 3752031700876284364, guid: f4e2dfa1ac2409e42b68f98a85bad0ff, type: 3}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _slimePrefab
+      value: 
+      objectReference: {fileID: 8131862494645995654, guid: 53d2f68935b6ba547a6a06ed553ee507, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner-Bottom
@@ -118325,6 +118337,10 @@ PrefabInstance:
       propertyPath: _frogPrefab
       value: 
       objectReference: {fileID: 3752031700876284364, guid: f4e2dfa1ac2409e42b68f98a85bad0ff, type: 3}
+    - target: {fileID: 3246597360242597760, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
+      propertyPath: _slimePrefab
+      value: 
+      objectReference: {fileID: 8131862494645995654, guid: 53d2f68935b6ba547a6a06ed553ee507, type: 3}
     - target: {fileID: 5952378656671889472, guid: 5acf61e1e51d44842b5071b6b262b504, type: 3}
       propertyPath: m_Name
       value: EnemySpawner-Left
