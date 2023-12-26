@@ -368,6 +368,8 @@ MonoBehaviour:
   _enemyHealthBar: {fileID: 1525941464157242201}
   _animateDirection: 0
   _graphics: {fileID: 0}
+  _flip: 0
+  _spriteRender: {fileID: 0}
 --- !u!114 &6263836016078437368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,6 +472,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentHealth: 10
   _maximumHealth: 10
+  _damagePopupPrefab: {fileID: 1583357120038638077, guid: b0a093b8533a5a34cba67d1f0ebbcab0, type: 3}
   OnDied:
     m_PersistentCalls:
       m_Calls:

@@ -13,6 +13,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private GameObject _enemyHealthBar;
     [SerializeField] private bool _animateDirection;
     [SerializeField] private GameObject _graphics;
+    [SerializeField] private bool _flip;
+    [SerializeField] private SpriteRenderer _spriteRender;
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
@@ -21,7 +23,8 @@ public class EnemyMovement : MonoBehaviour
     private Camera _camera;
     private Animator _animator;
     private Quaternion _rotation;
-
+    private bool rightFacing = true;
+   
 
     private void Awake()
     {
@@ -35,11 +38,36 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
+        Flip();
+
         if (_speed == 0) return;
 
         UpdateTargetDirection();
         RotateTowardsTarget();
         SetVelocity();
+    }
+
+    private void Flip()
+    {
+        if (!_flip) return;
+        var dot = Vector3.Dot(transform.right, _controller.DirectionToPlayer);
+        if (dot < 0)
+        {
+            // left
+            if (rightFacing)
+            {
+                _spriteRender.flipX = !_spriteRender.flipX;
+                rightFacing = false;
+            }
+        } else
+        {
+            //right
+            if (!rightFacing)
+            {
+                _spriteRender.flipX = !_spriteRender.flipX;
+                rightFacing = true;
+            }
+        }
     }
 
     private void LateUpdate()

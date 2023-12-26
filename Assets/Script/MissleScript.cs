@@ -60,7 +60,7 @@ public class MissleScript : MonoBehaviour
             if (collider.GetComponent<Player>())
             {
                 var healthController = collider.GetComponent<HealthController>();
-                healthController.TakeDamage(5);
+                healthController.TakeDamage(5, false);
             }
         }
     }

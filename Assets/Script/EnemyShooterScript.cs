@@ -15,7 +15,7 @@ public class EnemyShooterScript : MonoBehaviour
     [SerializeField] private float _enemySpeed;
     [SerializeField] private float _firingDelay;
     [SerializeField] private float _movingDelay;
-    [SerializeField] private float _damageAmount;
+    [SerializeField] private int _damageAmount;
     [SerializeField] private GameObject _enemyHealthBar;
 
     private Rigidbody2D _rigidbody;
@@ -30,7 +30,7 @@ public class EnemyShooterScript : MonoBehaviour
         if (collision.gameObject.GetComponent<Player>())
         {
             var healthController = collision.gameObject.GetComponent<HealthController>();
-            healthController.TakeDamage(_damageAmount);
+            healthController.TakeDamage(_damageAmount, false);
         }
     }
     

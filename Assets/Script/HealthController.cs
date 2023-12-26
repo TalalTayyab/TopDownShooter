@@ -5,10 +5,10 @@ using UnityEngine.Events;
 
 public class HealthController : MonoBehaviour
 {
-    [SerializeField]
-    private float _currentHealth;
-    [SerializeField]
-    private float _maximumHealth;
+    [SerializeField] private int _currentHealth;
+    [SerializeField] private int _maximumHealth;
+    [SerializeField] private GameObject _damagePopupPrefab;
+
     public UnityEvent OnDied;
     public UnityEvent OnDamage;
     public UnityEvent OnHealthChange;
@@ -17,13 +17,16 @@ public class HealthController : MonoBehaviour
     {
         get
         {
-            return _currentHealth / _maximumHealth;
+            float v = _currentHealth / ((float)_maximumHealth);
+            return v;
         }
     }
 
+    public int CurrentHealth => _currentHealth;
+
     public bool IsInvicible { get; set; }
 
-    public void TakeDamage(float damageAmount)
+    public void TakeDamage(int damageAmount, bool isCriticalHit)
     {
         if (_currentHealth < 0)
         {
@@ -37,6 +40,8 @@ public class HealthController : MonoBehaviour
 
         _currentHealth -= damageAmount; 
         OnHealthChange.Invoke();
+
+        DamagePopUp(transform.position, damageAmount, isCriticalHit);
 
         if (_currentHealth <0)
         {
@@ -53,7 +58,13 @@ public class HealthController : MonoBehaviour
         }
     }
 
-    public void AddHealth(float amountToAdd)
+    private void DamagePopUp(Vector3 position, int damageAmount, bool isCriticalHit)
+    {
+        var dp = Instantiate(_damagePopupPrefab, position, Quaternion.identity);
+        dp.GetComponent<DamagePopUpScript>().Setup(damageAmount, isCriticalHit);
+    }
+
+    public void AddHealth(int amountToAdd)
     {
         if (_currentHealth == _maximumHealth)
         {

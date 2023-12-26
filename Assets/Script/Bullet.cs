@@ -21,10 +21,9 @@ public class Bullet : MonoBehaviour
             var healthController = collision.GetComponent<HealthController>();
             var damage = Random.Range(3, 10);
             var isCriticalHit = IsCriticalHit(ref damage);
-            healthController.TakeDamage(damage);
+            healthController.TakeDamage(damage, isCriticalHit);
             Destroy(gameObject);
 
-            DamagePopUp(collision.transform.position, damage, isCriticalHit);
         }
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("Trees"))
@@ -45,13 +44,7 @@ public class Bullet : MonoBehaviour
 
         return false;
     }
-
-    private void DamagePopUp(Vector3 position, int damageAmount, bool isCriticalHit)
-    {
-        var dp = Instantiate(_damagePrefab, position, Quaternion.identity);
-        dp.GetComponent<DamagePopUpScript>().Setup(damageAmount, isCriticalHit);
-    }
-
+    
     private void Update()
     {
         

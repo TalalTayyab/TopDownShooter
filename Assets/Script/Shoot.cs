@@ -20,7 +20,7 @@ public class Shoot : MonoBehaviour
     [SerializeField] LineRenderer _lineRender;
     [SerializeField] private float _laserLength;
     [SerializeField] private float _laserMaxCharge;
-    [SerializeField] private float _laserDamage;
+    [SerializeField] private int _laserDamage;
     [SerializeField] private float _shootDelay;
     public UnityEvent OnLaserChange;
     private float _lastfireTime;
@@ -162,7 +162,7 @@ public class Shoot : MonoBehaviour
                 {
                     var health = hitPoint.collider.gameObject.GetComponent<HealthController>();
                     endPoint = hitPoint.point;
-                    health.TakeDamage(_laserDamage);
+                    health.TakeDamage(_laserDamage, false);
 
                 }
 

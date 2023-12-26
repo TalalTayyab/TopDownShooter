@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class EnemyAttack : MonoBehaviour
 {
     [SerializeField]
-    private float _damageAmount;
+    private int _damageAmount;
 
     public UnityEvent OnEnterCloseAttack;
     public UnityEvent OnLeaveCloseAttack;
@@ -18,7 +18,7 @@ public class EnemyAttack : MonoBehaviour
             OnEnterCloseAttack?.Invoke();
 
             var healthController = collision.gameObject.GetComponent<HealthController>();
-            healthController.TakeDamage(_damageAmount);
+            healthController.TakeDamage(_damageAmount, false);
         }
     }
 

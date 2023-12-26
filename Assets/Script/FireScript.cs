@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FireScript : MonoBehaviour
 {
-    [SerializeField] private float _damageAmount;
+    [SerializeField] private int _damageAmount;
     private bool _insideFire;
     private GameObject _gameObject;
 
@@ -30,7 +30,7 @@ public class FireScript : MonoBehaviour
         if (_insideFire && _gameObject.GetComponent<Player>())
         {
             var healthController = _gameObject.GetComponent<HealthController>();
-            healthController.TakeDamage(_damageAmount);
+            healthController.TakeDamage(_damageAmount, false);
         }
     }
 }

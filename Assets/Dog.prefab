@@ -450,6 +450,8 @@ MonoBehaviour:
   _enemyHealthBar: {fileID: 4250874593778528384}
   _animateDirection: 1
   _graphics: {fileID: 7201480056089718968}
+  _flip: 0
+  _spriteRender: {fileID: 0}
 --- !u!50 &2781605455495508360
 Rigidbody2D:
   serializedVersion: 4
@@ -580,8 +582,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12fdbd7a9f9e4f446a7c64c75c04edbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentHealth: 30
-  _maximumHealth: 30
+  _currentHealth: 10
+  _maximumHealth: 10
+  _damagePopupPrefab: {fileID: 1583357120038638077, guid: b0a093b8533a5a34cba67d1f0ebbcab0, type: 3}
   OnDied:
     m_PersistentCalls:
       m_Calls:

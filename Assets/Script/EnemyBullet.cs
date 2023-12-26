@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyBullet : MonoBehaviour
 {
-    [SerializeField] private float _damageAmount;
+    [SerializeField] private int _damageAmount;
     private Camera _camera;
 
     private void Awake()
@@ -17,7 +17,7 @@ public class EnemyBullet : MonoBehaviour
         if (collision.GetComponent<Player>())
         {
             var healthController = collision.GetComponent<HealthController>();
-            healthController.TakeDamage(_damageAmount);
+            healthController.TakeDamage(_damageAmount, false);
             Destroy(gameObject);
         }
     }

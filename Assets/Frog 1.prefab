@@ -140,7 +140,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.74, y: 2.61, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6846775410673684618}
@@ -165,6 +165,8 @@ MonoBehaviour:
   _enemyHealthBar: {fileID: 4068095071015931666}
   _animateDirection: 1
   _graphics: {fileID: 5563344011200185039}
+  _flip: 1
+  _spriteRender: {fileID: 5199546257243072854}
 --- !u!50 &7188085659966159113
 Rigidbody2D:
   serializedVersion: 4
@@ -297,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentHealth: 20
   _maximumHealth: 20
+  _damagePopupPrefab: {fileID: 1583357120038638077, guid: b0a093b8533a5a34cba67d1f0ebbcab0, type: 3}
   OnDied:
     m_PersistentCalls:
       m_Calls:

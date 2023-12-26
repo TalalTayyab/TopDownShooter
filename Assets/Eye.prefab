@@ -429,6 +429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentHealth: 56
   _maximumHealth: 56
+  _damagePopupPrefab: {fileID: 1583357120038638077, guid: b0a093b8533a5a34cba67d1f0ebbcab0, type: 3}
   OnDied:
     m_PersistentCalls:
       m_Calls:

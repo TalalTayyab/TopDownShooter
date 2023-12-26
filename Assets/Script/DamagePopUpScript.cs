@@ -19,7 +19,7 @@ public class DamagePopUpScript : MonoBehaviour
     private Color _textColor;
     private bool _isCriticalHit;
     private float _dissapearTimer;
-    private static int _sortingOrder = 0;
+    
 
     private void Awake()
     {
@@ -28,8 +28,6 @@ public class DamagePopUpScript : MonoBehaviour
 
     public void Setup(int damageAmount, bool isCriticalHit)
     {
-        _textMesh.sortingOrder = ++_sortingOrder;
-
         _isCriticalHit = isCriticalHit;
         _textMesh.SetText(damageAmount.ToString());
 
@@ -37,7 +35,7 @@ public class DamagePopUpScript : MonoBehaviour
         {
             _textMesh.fontSize = _criticalHitFontSize;
             _textColor = _criticalHitColor;
-            _textMesh.fontStyle = FontStyles.Bold;
+            _textMesh.sortingOrder = 1;
         }
         else
         {
@@ -48,7 +46,7 @@ public class DamagePopUpScript : MonoBehaviour
         _textMesh.color = _textColor;
         _dissapearTimer = _dissapearTimerMax;
 
-        _moveVector = new Vector3(Random.Range(1, _moveVector.x), Random.Range(1, _moveVector.y));
+        _moveVector = new Vector3(0, Random.Range(1,_moveVector.y));
 
     }
 
