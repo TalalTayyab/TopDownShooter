@@ -335,7 +335,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 70
+  m_Mass: 7000
   m_LinearDrag: 10
   m_AngularDrag: 10
   m_GravityScale: 0
@@ -372,12 +372,13 @@ MonoBehaviour:
   _spriteRender: {fileID: 0}
   _dontRoateGraphics: 1
   _shoot: 1
-  _enemyBullet: {fileID: 596826916974827622, guid: f4b80284cb1d17d448b93efe87abc05e, type: 3}
+  _enemyBullet: {fileID: 4618717388525573202, guid: 5987dd2a6a52feb439a8c9094eb529a9, type: 3}
   _bulletSpeed: 5
-  _enemySpeed: 1
   _firingDelay: 1
   _movingDelay: 3
   _damageAmount: 10
+  _shootMissle: 1
+  _useAwarenessToMove: 1
 --- !u!114 &6263836016078437368
 MonoBehaviour:
   m_ObjectHideFlags: 0

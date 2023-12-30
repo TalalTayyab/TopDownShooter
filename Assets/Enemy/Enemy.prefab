@@ -377,6 +377,8 @@ MonoBehaviour:
   _firingDelay: 0
   _movingDelay: 0
   _damageAmount: 0
+  _shootMissle: 0
+  _useAwarenessToMove: 0
 --- !u!114 &6263836016078437368
 MonoBehaviour:
   m_ObjectHideFlags: 0

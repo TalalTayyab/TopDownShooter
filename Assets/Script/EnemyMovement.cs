@@ -24,6 +24,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float _movingDelay;
     [SerializeField] private int _damageAmount;
     [SerializeField] private bool _shootMissle;
+    [SerializeField] private bool _useAwarenessToMove;
     
 
     private Rigidbody2D _rigidbody;
@@ -115,13 +116,20 @@ public class EnemyMovement : MonoBehaviour
     {
         _movingDelayCurrentValue -= Time.deltaTime;
 
-        if (_movingDelayCurrentValue < 0)
+        if (!_useAwarenessToMove && _movingDelayCurrentValue < 0)
         {
             _state = EnemyState.Firing;
             _movingDelayCurrentValue = _movingDelay;
             return;
-
         }
+
+        if (_useAwarenessToMove && _controller.AwareOfPlayer)
+        {
+            _state = EnemyState.Firing;
+            _movingDelayCurrentValue = _movingDelay;
+            return;
+        }
+      
 
         UpdateTargetDirection();
         RotateTowardsTarget();
