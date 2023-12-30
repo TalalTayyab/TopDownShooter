@@ -46,7 +46,7 @@ public class DamagePopUpScript : MonoBehaviour
         _textMesh.color = _textColor;
         _dissapearTimer = _dissapearTimerMax;
 
-        _moveVector = new Vector3(0, Random.Range(1,_moveVector.y));
+        _moveVector = new Vector3(0, _moveVector.y);
 
     }
 

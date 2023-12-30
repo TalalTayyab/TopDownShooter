@@ -374,7 +374,6 @@ MonoBehaviour:
   _shoot: 0
   _enemyBullet: {fileID: 0}
   _bulletSpeed: 0
-  _enemySpeed: 0
   _firingDelay: 0
   _movingDelay: 0
   _damageAmount: 0

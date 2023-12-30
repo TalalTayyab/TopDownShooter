@@ -20,10 +20,10 @@ public class EnemyMovement : MonoBehaviour
     
     [SerializeField] private GameObject _enemyBullet;
     [SerializeField] private float _bulletSpeed;
-    [SerializeField] private float _enemySpeed;
     [SerializeField] private float _firingDelay;
     [SerializeField] private float _movingDelay;
     [SerializeField] private int _damageAmount;
+    [SerializeField] private bool _shootMissle;
     
 
     private Rigidbody2D _rigidbody;
@@ -86,6 +86,31 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+    void ShootMissle()
+    {
+        var prefab = _enemyBullet;
+        var position = transform.position;
+        var go=  Instantiate(prefab, position, Quaternion.identity);
+        var playerPos = _controller.Player.position;
+
+        go.GetComponent<MissleScript>().Setup(playerPos);
+
+        playerPos = new Vector3(playerPos.x + 1.5f, playerPos.y + 1.5f, playerPos.z);
+        go = Instantiate(prefab, position, Quaternion.identity);
+        go.GetComponent<MissleScript>().Setup(playerPos);
+
+        playerPos = new Vector3(playerPos.x - 3, playerPos.y - 3, playerPos.z);
+        go = Instantiate(prefab, position, Quaternion.identity);
+        go.GetComponent<MissleScript>().Setup(playerPos);
+    }
+
+    void ShootBullet()
+    {
+        var bullet = Instantiate(_enemyBullet, transform.position, transform.rotation);
+        var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
+        ridigBody2d.velocity = transform.up * _bulletSpeed;
+    }
+
     private void Move()
     {
         _movingDelayCurrentValue -= Time.deltaTime;
@@ -100,18 +125,25 @@ public class EnemyMovement : MonoBehaviour
 
         UpdateTargetDirection();
         RotateTowardsTarget();
-        _rigidbody.velocity = transform.up * _enemySpeed;
+        SetVelocity();
+        //_rigidbody.velocity = transform.up * _enemySpeed;
         //_rigidbody.velocity = transform.up * _enemySpeed * (_controller.DirectionToPlayer.magnitude);
-        _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
+        //_enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     private void Fire()
     {
         if (_firingDelayCurrentValue == _firingDelay)
         {
-            var bullet = Instantiate(_enemyBullet, transform.position, transform.rotation);
-            var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
-            ridigBody2d.velocity = transform.up * _bulletSpeed;
+            if (_shootMissle)
+            {
+                ShootMissle();
+            }
+            else
+            {
+                ShootBullet();
+            }
+           
         }
 
         _firingDelayCurrentValue -= Time.deltaTime;

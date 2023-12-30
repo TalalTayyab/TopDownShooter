@@ -187,8 +187,8 @@ MonoBehaviour:
   _moveVector: {x: 0, y: 10, z: 0}
   _decreaseSpeed: 10
   _dissapearTimerMax: 0.6
-  _normalColor: {r: 0.8, g: 0.7721291, b: 0.035294104, a: 1}
-  _criticalHitColor: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
+  _normalColor: {r: 1, g: 1, b: 1, a: 1}
+  _criticalHitColor: {r: 0.9622642, g: 0, b: 0, a: 1}
   _normalFontSize: 20
   _criticalHitFontSize: 24
   _scaleAmount: 0.3

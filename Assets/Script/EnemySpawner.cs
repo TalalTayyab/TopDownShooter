@@ -12,7 +12,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private GameObject _eyePrefab;
     [SerializeField] private float _minSpawnTime;
     [SerializeField] private float _maxSpawnTime;
-    [SerializeField] private GameObject _misslePrefab;
     [SerializeField] private int Location;
 
     private Transform _playerTransform;
@@ -84,12 +83,7 @@ public class EnemySpawner : MonoBehaviour
         Instantiate(prefab, transform.position, Quaternion.identity);
     }
 
-    void SpawnMissle()
-    {
-        var prefab = _misslePrefab;
-        var position = _playerTransform.transform.position;
-        Instantiate(prefab, position, Quaternion.identity);
-    }
+   
 
     void SpawnDog()
     {
@@ -135,10 +129,6 @@ public class EnemySpawner : MonoBehaviour
 
             case 7:
                 SpawnEye();
-                break;
-
-            case 5:
-                SpawnMissle();
                 break;
 
             default:
