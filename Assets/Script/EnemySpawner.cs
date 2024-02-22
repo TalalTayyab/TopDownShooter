@@ -5,25 +5,15 @@ using UnityEngine.UIElements;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject _enemyPrefab;
-    [SerializeField] private GameObject _slimePrefab;
-    [SerializeField] private GameObject _dogPrefab;
-    [SerializeField] private GameObject _frogPrefab;
-    [SerializeField] private GameObject _eyePrefab;
-    [SerializeField] private float _minSpawnTime;
-    [SerializeField] private float _maxSpawnTime;
     [SerializeField] private int Location;
-
-    private Transform _playerTransform;
-    private float _timeUntilSpawn;
     private Vector3 _delta;
-
-
+    private Transform _playerTransform;
+   
 
     // Start is called before the first frame update
     void Start()
     {
-        SetTimeUntilSpawn();
+       
         _playerTransform = FindObjectOfType<Player>().transform;
         if (Location == 0) //left-mid
         {
@@ -55,92 +45,4 @@ public class EnemySpawner : MonoBehaviour
         transform.position = new Vector3(_playerTransform.position.x + _delta.x, _playerTransform.position.y + _delta.y, transform.position.z);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        _timeUntilSpawn -= Time.deltaTime;
-
-        if (_timeUntilSpawn <= 0)
-        {
-            Spawn();
-        }
-    }
-
-    void SpawnEnemy()
-    {
-        var prefab = _enemyPrefab;
-        prefab.GetComponent<EnemyShooterScript>().enabled = false;
-        prefab.GetComponent<EnemyMovement>().enabled = true;
-        prefab.GetComponentInChildren<SpriteRenderer>().color = Color.white;
-        prefab.GetComponent<HealthController>().SetMaxHealth(10);
-
-        Instantiate(prefab, transform.position, Quaternion.identity);
-    }
-
-    void SpawnEye()
-    {
-        var prefab = _eyePrefab;
-        Instantiate(prefab, transform.position, Quaternion.identity);
-    }
-
-   
-
-    void SpawnDog()
-    {
-        var prefab = _dogPrefab;
-        prefab.GetComponent<EnemyMovement>().enabled = true;
-        prefab.GetComponent<EnemyMovement>()._speed = 4.5f;
-        prefab.GetComponent<HealthController>().SetMaxHealth(10);
-        Instantiate(prefab, transform.position, Quaternion.identity);
-    }
-
-    void SpawnFrog()
-    {
-        var prefab = _frogPrefab;
-        var pp = _playerTransform.position;
-        var position = new Vector3(pp.x + Random.Range(-10f, +10f), pp.y + Random.Range(-10f, 10f), pp.z);
-        prefab.GetComponent<HealthController>().SetMaxHealth(20);
-        Instantiate(prefab, position, Quaternion.identity);
-    }
-
-    void SpawnSlime()
-    {
-        var prefab = _slimePrefab;
-        Instantiate(prefab, transform.position, Quaternion.identity);
-    }
-
-
-    void Spawn()
-    {
-        var rnd = Random.Range(0, 8);
-        switch (rnd)
-        {
-            case 1:
-                SpawnSlime();
-                break;
-
-            case 2:
-                SpawnFrog();
-                break;
-
-            case 3:
-                SpawnDog();
-                break;
-
-            case 7:
-                SpawnEye();
-                break;
-
-            default:
-                SpawnEnemy();
-                break;
-        }
-
-        SetTimeUntilSpawn();
-    }
-
-    private void SetTimeUntilSpawn()
-    {
-        _timeUntilSpawn = Random.Range(_minSpawnTime, _maxSpawnTime);
-    }
 }

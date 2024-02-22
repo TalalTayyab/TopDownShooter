@@ -5,28 +5,38 @@ using UnityEngine.Events;
 
 public class HealthController : MonoBehaviour
 {
-    [SerializeField] private int _currentHealth;
-    [SerializeField] private int _maximumHealth;
+    [SerializeField] private float _currentHealth;
+    [SerializeField] private float _maximumHealth;
     [SerializeField] private GameObject _damagePopupPrefab;
 
     public UnityEvent OnDied;
     public UnityEvent OnDamage;
     public UnityEvent OnHealthChange;
 
+    public bool isPlayerHealth;
+    private float _prevMaxHealth;
+
+
+    private void Awake()
+    {
+        _prevMaxHealth = _currentHealth = _maximumHealth;
+    }
+
     public float RemainingHealthPercentage
     {
         get
         {
-            float v = _currentHealth / ((float)_maximumHealth);
+            float v = _currentHealth / _maximumHealth;
             return v;
         }
     }
 
-    public int CurrentHealth => _currentHealth;
+    public float CurrentHealth => _currentHealth;
+    public float MaximumHealth => _maximumHealth;
 
     public bool IsInvicible { get; set; }
 
-    public void TakeDamage(int damageAmount, bool isCriticalHit)
+    public void TakeDamage(float damageAmount, bool isCriticalHit)
     {
         if (_currentHealth < 0)
         {
@@ -41,7 +51,7 @@ public class HealthController : MonoBehaviour
         _currentHealth -= damageAmount; 
         OnHealthChange.Invoke();
 
-        DamagePopUp(transform.position, damageAmount, isCriticalHit);
+        DamagePopUp(transform.position, damageAmount, isCriticalHit, false);
 
         if (_currentHealth <0)
         {
@@ -58,18 +68,21 @@ public class HealthController : MonoBehaviour
         }
     }
 
-    private void DamagePopUp(Vector3 position, int damageAmount, bool isCriticalHit)
+    private void DamagePopUp(Vector3 position, float amount, bool isCriticalHit, bool isHealthIncrease)
     {
         var dp = Instantiate(_damagePopupPrefab, position, Quaternion.identity);
-        dp.GetComponent<DamagePopUpScript>().Setup(damageAmount, isCriticalHit);
+        dp.GetComponent<DamagePopUpScript>().Setup(amount, isCriticalHit, isHealthIncrease);
     }
 
-    public void AddHealth(int amountToAdd)
+    public void AddHealth(float amountToAdd)
     {
+       // Debug.Log($"c={_currentHealth},m={_maximumHealth},a={amountToAdd}");
         if (_currentHealth == _maximumHealth)
         {
             return;
         }
+
+        if (amountToAdd <= 0) return;
 
         _currentHealth += amountToAdd;
         OnHealthChange.Invoke();
@@ -78,10 +91,19 @@ public class HealthController : MonoBehaviour
         {
             _currentHealth = _maximumHealth;
         }
+
+        if (isPlayerHealth)
+            DamagePopUp(transform.position, amountToAdd, false, true);
     }
 
-    public void SetMaxHealth(int maxHealth)
+    public void SetMaxHealth(float maxHealth)
     {
-        _currentHealth = _maximumHealth = maxHealth;
+        _maximumHealth = maxHealth;
+
+        var diff = _maximumHealth - _prevMaxHealth;
+
+        _prevMaxHealth = _maximumHealth;
+
+        AddHealth(diff);
     }
 }

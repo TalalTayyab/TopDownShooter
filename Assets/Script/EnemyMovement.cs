@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] public float _speed = 1;
+    [SerializeField] private float _speed = 1;
     [SerializeField] private float _rotationSpeed = 100;
     [SerializeField] private float _screenBorder;
     [SerializeField] private GameObject _enemyHealthBar;
@@ -40,7 +40,20 @@ public class EnemyMovement : MonoBehaviour
     private float _movingDelayCurrentValue;
     enum EnemyState { Moving = 0, Firing = 1 };
     private EnemyState _state = EnemyState.Moving;
+    private Vector3 _currentVelocity;
+    private Vector3 _playerPos;
 
+    public void SetShoot(bool shoot, bool shootMissle)
+    {
+        _shoot = shoot;
+        _shootMissle = shootMissle;
+        _playerPos = Vector3.zero;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        _speed = speed;
+    }
 
     private void Awake()
     {
@@ -52,6 +65,10 @@ public class EnemyMovement : MonoBehaviour
 
         _firingDelayCurrentValue = _firingDelay;
         _movingDelayCurrentValue = _movingDelay;
+        _currentVelocity = transform.up * _speed;
+
+        _changeDirectionCoolDown = UnityEngine.Random.Range(0f, 2f);
+
     }
 
     // Update is called once per frame
@@ -107,9 +124,13 @@ public class EnemyMovement : MonoBehaviour
 
     void ShootBullet()
     {
+        HandlePlayerTargetting(true);
+        RotateTowardsTarget(true);
         var bullet = Instantiate(_enemyBullet, transform.position, transform.rotation);
-        var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
-        ridigBody2d.velocity = transform.up * _bulletSpeed;
+        bullet.GetComponent<EnemyBullet>().Setup(_controller.Player.position, _bulletSpeed);
+        //var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
+        //ridigBody2d.velocity = transform.up * _bulletSpeed;
+
     }
 
     private void Move()
@@ -193,9 +214,7 @@ public class EnemyMovement : MonoBehaviour
         if (_animateDirection)
         {
             _graphics.transform.rotation = _rotation;
-
         }
-
     }
 
     void UpdateTargetDirection()
@@ -213,7 +232,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void HandleEnemyOffScreen()
+    /*private void HandleEnemyOffScreen()
     {
         Vector2 screenPosition = _camera.WorldToScreenPoint(transform.position);
 
@@ -227,9 +246,9 @@ public class EnemyMovement : MonoBehaviour
         {
             _targetDirection = new Vector2(_targetDirection.x, -_targetDirection.y);
         }
-    }
+    }*/
 
-    private void RotateTowardsTarget()
+    private void RotateTowardsTarget(bool setImmediately = false)
     {
        
         if (_animateDirection)
@@ -243,9 +262,13 @@ public class EnemyMovement : MonoBehaviour
             _rotation = _graphics.transform.rotation;
         }
 
+        var rotationSpeed = _rotationSpeed * Time.deltaTime;
+        
         var targetRotation = Quaternion.LookRotation(transform.forward, _targetDirection);
-        var rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-        _rigidbody.SetRotation(rotation);
+        //var rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed);
+        //_rigidbody.SetRotation(rotation);
+        transform.rotation = targetRotation;
+        
         _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
 
 
@@ -258,7 +281,11 @@ public class EnemyMovement : MonoBehaviour
 
     private void SetVelocity()
     {
+        //var desiredV = transform.up * _speed;
+        //var _steeringV = (desiredV - _currentVelocity) / _rigidbody.mass;
+        //_currentVelocity += _steeringV;
         _rigidbody.velocity = transform.up * _speed;// * (_controller.DirectionToPlayer.magnitude);
+        //_rigidbody.velocity = _currentVelocity;
     }
 
     private void HandleRandomDirectionChange()
@@ -273,11 +300,16 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void HandlePlayerTargetting()
+    private void HandlePlayerTargetting(bool immediate = false)
     {
-      //  if (_controller.AwareOfPlayer)
+        //  if (_controller.AwareOfPlayer)
+        _changeDirectionCoolDown -= Time.deltaTime;
+
+        if (_changeDirectionCoolDown<=0 || immediate)
         {
+            _playerPos = _controller.Player.position;
             _targetDirection = _controller.DirectionToPlayer.normalized;
+            _changeDirectionCoolDown = _changeDirectionCoolDown = UnityEngine.Random.Range(0f, 2f);
         }
     }
 

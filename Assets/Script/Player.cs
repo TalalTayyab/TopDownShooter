@@ -1,16 +1,13 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject _damagePrefab;
-    [SerializeField] private float _speed = 5f;
     [SerializeField] private float _rotationSpeed;
     [SerializeField] private float _screenBorder;
-    [SerializeField] private float _dashSpeed;
-    [SerializeField] private float _dashDelay;
+    [SerializeField] private Slider _dashCDUI;
 
     private Rigidbody2D _rigidbody2;
     private Vector2 _movementInput;
@@ -19,12 +16,35 @@ public class Player : MonoBehaviour
     private Camera _camera;
     private Animator _animator;
     private bool isDashing;
+    private HealthController _hc;
+    private float _dashCd;
+    private bool _dashedOnCD;
+    private float _healthRechargeCD;
+    private TrailRenderer _trailRenderer;
+    
 
     private void Awake()
     {
         _rigidbody2 = GetComponent<Rigidbody2D>();
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
+        _hc = GetComponent<HealthController>();
+        _hc.isPlayerHealth = true;
+        _hc.SetMaxHealth(PowerUpManagerFactory.PowerUpManager.PlayerHealth);
+        _dashCd = PowerUpManagerFactory.PowerUpManager.PlayerDashCD;
+        _healthRechargeCD = PowerUpManagerFactory.PowerUpManager.PlayerHealthRechargeCD;
+        _trailRenderer = GetComponent<TrailRenderer>();
+    }
+
+    private void HealthRecharge()
+    {
+        _healthRechargeCD -= Time.deltaTime;
+
+        if (_healthRechargeCD <= 0)
+        {
+            _healthRechargeCD = PowerUpManagerFactory.PowerUpManager.PlayerHealthRechargeCD;
+            _hc.AddHealth(PowerUpManagerFactory.PowerUpManager.PlayerHealthRecharge);
+        }
     }
 
     private void Update()
@@ -32,47 +52,78 @@ public class Player : MonoBehaviour
         _movementInput.x = Input.GetAxisRaw("Horizontal");
         _movementInput.y = Input.GetAxisRaw("Vertical");
 
-        if (isDashing)
+
+        if (_dashedOnCD)
         {
-            return;
+            _dashCd -= Time.deltaTime;
+            _dashCDUI.value = 1 - (_dashCd / PowerUpManagerFactory.PowerUpManager.PlayerDashCD);
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (_dashCd <=0)
         {
-           
-            StartCoroutine(Dash());
-            return;
+            _dashedOnCD = false;
+            
         }
+
+        if (_dashedOnCD == false && (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space)))
+        {
+            _dashedOnCD = true;
+            _dashCd = PowerUpManagerFactory.PowerUpManager.PlayerDashCD;
+            StartCoroutine(Dash());
+        }
+
+        
     }
+
+    
 
     private void FixedUpdate()
     {
+        _hc.SetMaxHealth(PowerUpManagerFactory.PowerUpManager.PlayerHealth);
+
         if (!isDashing)
         {
-            SetVelocity();
+            _smoothMovement = Vector2.SmoothDamp(_smoothMovement, _movementInput, ref _currentVelocity, 0.1f);
+            _rigidbody2.velocity = _smoothMovement * PowerUpManagerFactory.PowerUpManager.PlayerSpeed;
+        }
+        else
+        {
+            /*_rigidbody2.velocity = new Vector2(
+            _movementInput.x * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed,
+            _movementInput.y * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed);*/
+
+            _smoothMovement = Vector2.SmoothDamp(_smoothMovement, _movementInput, ref _currentVelocity, 0.1f);
+            _rigidbody2.velocity = _smoothMovement * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed;
         }
         
         //RotationInDirectionOfInput();
-        RotateInDirectionOfMouse();
+       // RotateInDirectionOfMouse();
         SetAnimation();
+
+        HealthRecharge();
+
     }
 
     private IEnumerator Dash()
     {
         isDashing = true;
-        Debug.Log("dash start");
-        _rigidbody2.velocity = new Vector2(_movementInput.x * _dashSpeed, _movementInput.y * _dashSpeed);
-        yield return new WaitForSeconds(_dashDelay);
-        isDashing = false;
-        Debug.Log("dash end");
-    }
+        _trailRenderer.emitting = true;
 
-    private void SetVelocity()
-    {
-       
-        _smoothMovement = Vector2.SmoothDamp(_smoothMovement, _movementInput, ref _currentVelocity, 0.1f);
-        _rigidbody2.velocity = _smoothMovement * _speed;
-        PreventPlayerGoingOffScreen();
+        /*var tp = new Vector3(
+            transform.position.x + (_movementInput.x * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed),
+            transform.position.y + (_movementInput.y * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed));*/
+
+        /*while (transform.position != tp)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, tp, Time.deltaTime * PowerUpManagerFactory.PowerUpManager.PlayerDashSpeed * 10);
+            yield return null;
+        }
+        //yield return new WaitForSeconds(PowerUpManagerFactory.PowerUpManager.PlayerDashCD);*/
+
+        yield return new WaitForSeconds(0.2f);
+
+        isDashing = false;
+        _trailRenderer.emitting = false;
     }
 
     private void PreventPlayerGoingOffScreen()

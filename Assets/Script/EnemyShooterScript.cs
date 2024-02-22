@@ -40,6 +40,7 @@ public class EnemyShooterScript : MonoBehaviour
         _firingDelayCurrentValue = _firingDelay;
         _movingDelayCurrentValue = _movingDelay;
         _controller = GetComponent<PlayerAwarenessController>();
+        RotateTowardsPlayerImmediately();
     }
 
 
@@ -70,7 +71,7 @@ public class EnemyShooterScript : MonoBehaviour
             return;
 
         }
-        RotateTowardsPlayer();
+      //  RotateTowardsPlayer();
         _rigidbody.velocity = transform.up * _enemySpeed;
         //_rigidbody.velocity = transform.up * _enemySpeed * (_controller.DirectionToPlayer.magnitude);
         _enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -102,5 +103,12 @@ public class EnemyShooterScript : MonoBehaviour
         var targetRoation = Quaternion.LookRotation(transform.forward, direction);
         targetRoation = Quaternion.RotateTowards(transform.rotation, targetRoation, _rotationSpeed * Time.deltaTime);
         _rigidbody.SetRotation(targetRoation);
+    }
+
+    private void RotateTowardsPlayerImmediately()
+    {
+        var direction = _controller.DirectionToPlayer.normalized;
+        var targetRoation = Quaternion.LookRotation(transform.forward, direction);
+        transform.rotation = targetRoation;
     }
 }

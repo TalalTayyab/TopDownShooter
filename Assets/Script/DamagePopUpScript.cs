@@ -11,6 +11,7 @@ public class DamagePopUpScript : MonoBehaviour
     [SerializeField] private float _dissapearTimerMax;
     [SerializeField] private Color _normalColor;
     [SerializeField] private Color _criticalHitColor;
+    [SerializeField] private Color _healthIncreaseColor;
     [SerializeField] private int _normalFontSize;
     [SerializeField] private int _criticalHitFontSize;
     [SerializeField] private float _scaleAmount;
@@ -19,19 +20,26 @@ public class DamagePopUpScript : MonoBehaviour
     private Color _textColor;
     private bool _isCriticalHit;
     private float _dissapearTimer;
-    
+
 
     private void Awake()
     {
         _textMesh = GetComponent<TextMeshPro>();
     }
 
-    public void Setup(int damageAmount, bool isCriticalHit)
+    public void Setup(float amount, bool isCriticalHit, bool isHealthIncrease)
     {
         _isCriticalHit = isCriticalHit;
-        _textMesh.SetText(damageAmount.ToString());
+        _textMesh.SetText(Mathf.RoundToInt(amount).ToString());
 
-        if (_isCriticalHit)
+
+        if (isHealthIncrease)
+        {
+            _textMesh.fontSize = _normalFontSize;
+            _textColor = _healthIncreaseColor;
+            _textMesh.SetText("+");
+        }
+        else if(_isCriticalHit)
         {
             _textMesh.fontSize = _criticalHitFontSize;
             _textColor = _criticalHitColor;

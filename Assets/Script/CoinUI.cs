@@ -6,11 +6,17 @@ using UnityEngine;
 public class CoinUI : MonoBehaviour
 {
     [SerializeField] TMP_Text _coinText;
-    private int _coins;
+    private int Coins;
+    public int LevelCoins { get; private set; }
     public void AddCoins()
     {
-        _coins++;
-        _coinText.text = $"Coin: {_coins}";
+        Coins++;
+        LevelCoins++;
+        _coinText.text = $"Coins:{Coins}";
+    }
 
+    public void NewLevel()
+    {
+        LevelCoins = 0;
     }
 }

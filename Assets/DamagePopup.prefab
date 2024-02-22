@@ -189,6 +189,7 @@ MonoBehaviour:
   _dissapearTimerMax: 0.6
   _normalColor: {r: 1, g: 1, b: 1, a: 1}
   _criticalHitColor: {r: 0.9622642, g: 0, b: 0, a: 1}
+  _healthIncreaseColor: {r: 0.06274474, g: 0.8867924, b: 0.096370086, a: 1}
   _normalFontSize: 20
   _criticalHitFontSize: 24
   _scaleAmount: 0.3

@@ -10,10 +10,11 @@ public class ScoreUI : MonoBehaviour
     private void Awake()
     {
         _scoreText = GetComponent<TMP_Text>();
+        _scoreText.text = $"Score:0";
     }
 
     public void UpdateScore (ScoreController scoreController) 
     {
-        _scoreText.text = $"Score: {scoreController.Score}"; 
+        _scoreText.text = $"Score:{scoreController.Score}"; 
     }
 }

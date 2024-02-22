@@ -10,18 +10,20 @@ public class CollectableScript : MonoBehaviour
     GameObject _player;
     bool hasCollided;
     public UnityEvent OnCoinCollected;
-    
+    private CircleCollider2D _collider;
 
 
     private void Awake()
     {
         _player = FindObjectOfType<Player>().gameObject;
         _playerHealthController = FindObjectOfType<Player>().GetComponent<HealthController>();
-       // Destroy(gameObject, _autoDestoryTime);
+        // Destroy(gameObject, _autoDestoryTime);
+        _collider = GetComponent<CircleCollider2D>();
     }
 
     private void FixedUpdate()
     {
+        _collider.radius = PowerUpManagerFactory.PowerUpManager.CoinPickupRange;
         if (hasCollided)
         {
             transform.position = Vector3.Slerp( transform.position, _player.transform.position, _speed);

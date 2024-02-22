@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float _autoDestoryTime;
+   // [SerializeField] private float _autoDestoryTime;
     [SerializeField] private GameObject _damagePrefab;
     private Camera _camera;
     
     private void Awake()
     {
         _camera = Camera.main;
-        Destroy(gameObject, _autoDestoryTime);
+        Destroy(gameObject, PowerUpManagerFactory.PowerUpManager.BulletDistance);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
 
         {
             var healthController = collision.GetComponent<HealthController>();
-            var damage = Random.Range(3, 10);
+            var damage = PowerUpManagerFactory.PowerUpManager.BulletDamage;
             var isCriticalHit = IsCriticalHit(ref damage);
             healthController.TakeDamage(damage, isCriticalHit);
             Destroy(gameObject);
@@ -32,12 +32,13 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    private bool IsCriticalHit(ref int damage)
+    private bool IsCriticalHit(ref float damage)
     {
-        var range = Random.Range(1, 6);
-        if (range == 3)
+        var randomValue = Random.Range(1,101);
+        var critp = PowerUpManagerFactory.PowerUpManager.BulletCriticalDamageChance;
+        if (randomValue < critp)
         {
-            var modifier = Random.Range(3, 10);
+            var modifier = Random.Range(PowerUpManagerFactory.PowerUpManager.BulletDamage, PowerUpManagerFactory.PowerUpManager.BulletCriticalDamage);
             damage = damage + modifier;
             return true;
         }
