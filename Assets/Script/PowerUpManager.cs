@@ -8,6 +8,11 @@ public static class PowerUpManagerFactory
     static PowerUpManager _powerupManager;
     static PowerUpManagerFactory() { _powerupManager = new PowerUpManager(); }
     public static PowerUpManager PowerUpManager => _powerupManager;
+
+    public static void NewClass()
+    {
+        _powerupManager = new PowerUpManager();
+    }
 }
 
 public class PowerUpManager 

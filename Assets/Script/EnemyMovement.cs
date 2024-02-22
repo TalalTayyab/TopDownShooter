@@ -25,7 +25,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private int _damageAmount;
     [SerializeField] private bool _shootMissle;
     [SerializeField] private bool _useAwarenessToMove;
-    
+
 
     private Rigidbody2D _rigidbody;
     private PlayerAwarenessController _controller;
@@ -42,6 +42,11 @@ public class EnemyMovement : MonoBehaviour
     private EnemyState _state = EnemyState.Moving;
     private Vector3 _currentVelocity;
     private Vector3 _playerPos;
+
+    public bool UseFixedPositionForMovement;
+    public Vector3 FixedPositionForTarget;
+    public bool ReachedPosition;
+    public bool DontUseTargetCD;
 
     public void SetShoot(bool shoot, bool shootMissle)
     {
@@ -83,6 +88,16 @@ public class EnemyMovement : MonoBehaviour
 
         Flip();
 
+        if (UseFixedPositionForMovement)
+        {
+            var diff = Vector3.Distance(transform.position,FixedPositionForTarget);
+            if (diff < 0.5f)
+            {
+                ReachedPosition = true;
+                return;
+            }
+        }
+
         if (_speed == 0) return;
 
         UpdateTargetDirection();
@@ -109,7 +124,7 @@ public class EnemyMovement : MonoBehaviour
         var prefab = _enemyBullet;
         var position = transform.position;
         var go=  Instantiate(prefab, position, Quaternion.identity);
-        var playerPos = _controller.Player.position;
+        var playerPos = TargetPosition();
 
         go.GetComponent<MissleScript>().Setup(playerPos);
 
@@ -127,7 +142,7 @@ public class EnemyMovement : MonoBehaviour
         HandlePlayerTargetting(true);
         RotateTowardsTarget(true);
         var bullet = Instantiate(_enemyBullet, transform.position, transform.rotation);
-        bullet.GetComponent<EnemyBullet>().Setup(_controller.Player.position, _bulletSpeed);
+        bullet.GetComponent<EnemyBullet>().Setup(TargetPosition(), _bulletSpeed);
         //var ridigBody2d = bullet.GetComponent<Rigidbody2D>();
         //ridigBody2d.velocity = transform.up * _bulletSpeed;
 
@@ -150,13 +165,14 @@ public class EnemyMovement : MonoBehaviour
             _movingDelayCurrentValue = _movingDelay;
             return;
         }
-      
 
+
+        
         UpdateTargetDirection();
         RotateTowardsTarget();
         SetVelocity();
         //_rigidbody.velocity = transform.up * _enemySpeed;
-        //_rigidbody.velocity = transform.up * _enemySpeed * (_controller.DirectionToPlayer.magnitude);
+        //_rigidbody.velocity = transform.up * _enemySpeed * (TargetDirection().magnitude);
         //_enemyHealthBar.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
@@ -189,7 +205,7 @@ public class EnemyMovement : MonoBehaviour
     private void Flip()
     {
         if (!_flip) return;
-        var dot = Vector3.Dot(transform.right, _controller.DirectionToPlayer);
+        var dot = Vector3.Dot(transform.right, TargetDirection());
         if (dot < 0)
         {
             // left
@@ -253,10 +269,10 @@ public class EnemyMovement : MonoBehaviour
        
         if (_animateDirection)
         {
-            if (_controller.DirectionToPlayer.x != 0 && _controller.DirectionToPlayer.y != 0)
+            if (TargetDirection().x != 0 && TargetDirection().y != 0)
             {
-                _animator.SetFloat("MovementX", _controller.DirectionToPlayer.x);
-                _animator.SetFloat("MovementY", _controller.DirectionToPlayer.y);
+                _animator.SetFloat("MovementX", TargetDirection().x);
+                _animator.SetFloat("MovementY", TargetDirection().y);
             }
 
             _rotation = _graphics.transform.rotation;
@@ -284,11 +300,11 @@ public class EnemyMovement : MonoBehaviour
         //var desiredV = transform.up * _speed;
         //var _steeringV = (desiredV - _currentVelocity) / _rigidbody.mass;
         //_currentVelocity += _steeringV;
-        _rigidbody.velocity = transform.up * _speed;// * (_controller.DirectionToPlayer.magnitude);
+        _rigidbody.velocity = transform.up * _speed;// * (TargetDirection().magnitude);
         //_rigidbody.velocity = _currentVelocity;
     }
 
-    private void HandleRandomDirectionChange()
+    /*private void HandleRandomDirectionChange()
     {
         _changeDirectionCoolDown -= Time.deltaTime;
         if (_changeDirectionCoolDown <= 0)
@@ -298,17 +314,40 @@ public class EnemyMovement : MonoBehaviour
             _targetDirection = rotation * _targetDirection;
             _changeDirectionCoolDown = UnityEngine.Random.Range(1f, 5f);
         }
+    }*/
+
+
+    private Vector3 TargetDirection()
+    {
+        if (UseFixedPositionForMovement)
+        {
+            return FixedPositionForTarget - transform.position; 
+        }
+
+        return _controller.DirectionToPlayer;
+    }
+
+    private Vector3 TargetPosition()
+    {
+        if (UseFixedPositionForMovement)
+        {
+            return FixedPositionForTarget;
+        }
+
+        return _controller.Player.position;
     }
 
     private void HandlePlayerTargetting(bool immediate = false)
     {
+        if (UseFixedPositionForMovement) immediate = true;
+
         //  if (_controller.AwareOfPlayer)
         _changeDirectionCoolDown -= Time.deltaTime;
 
-        if (_changeDirectionCoolDown<=0 || immediate)
+        if (_changeDirectionCoolDown<=0 || immediate || DontUseTargetCD)
         {
-            _playerPos = _controller.Player.position;
-            _targetDirection = _controller.DirectionToPlayer.normalized;
+            _playerPos = TargetPosition();
+            _targetDirection = TargetDirection().normalized;
             _changeDirectionCoolDown = _changeDirectionCoolDown = UnityEngine.Random.Range(0f, 2f);
         }
     }

@@ -5,8 +5,8 @@ using UnityEngine.Events;
 
 public class EnemyAttack : MonoBehaviour
 {
-    [SerializeField]
-    private int _damageAmount;
+    [SerializeField] private int _damageAmount;
+    [SerializeField] private AudioSource _audioZombieGrowl;
 
     public UnityEvent OnEnterCloseAttack;
     public UnityEvent OnLeaveCloseAttack;
@@ -16,7 +16,7 @@ public class EnemyAttack : MonoBehaviour
         if (collision.gameObject.GetComponent<Player>())
         {
             OnEnterCloseAttack?.Invoke();
-
+            _audioZombieGrowl.Play();
             var healthController = collision.gameObject.GetComponent<HealthController>();
             healthController.TakeDamage(_damageAmount, false);
         }

@@ -16,6 +16,7 @@ public class Shoot : MonoBehaviour
     [SerializeField] private float _bombSpeed;
     [SerializeField] private bool _throwBomb;
     [SerializeField] private GameObject _dashCDUI;
+    [SerializeField] private AudioSource _audioBulletFire;
 
     // [SerializeField] private bool _shootLaser;
     //  [SerializeField] private bool _fireGun;
@@ -293,6 +294,7 @@ public class Shoot : MonoBehaviour
 
     private void InstantitateBullet(float angle)
     {
+        _audioBulletFire.Play();
         var rotation = Quaternion.Euler(0, 0, angle);
         rotation = transform.rotation * rotation;
         var direction = rotation * Vector3.up;

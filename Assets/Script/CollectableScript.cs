@@ -6,12 +6,12 @@ public class CollectableScript : MonoBehaviour
     [SerializeField] private float _autoDestoryTime;
     [SerializeField] private Animator _animator;
     [SerializeField] private float _speed;
+    [SerializeField] private AudioSource _audioCoinCollected;
     HealthController _playerHealthController;
     GameObject _player;
     bool hasCollided;
     public UnityEvent OnCoinCollected;
     private CircleCollider2D _collider;
-
 
     private void Awake()
     {
@@ -32,10 +32,14 @@ public class CollectableScript : MonoBehaviour
             if (Mathf.Abs(diff.magnitude) < 0.4f)
             {
                 OnCoinCollected.Invoke();
-                Destroy(gameObject);
+                _audioCoinCollected.Play();
+                hasCollided = false;
+                Destroy(gameObject,0.1f);
             }
         }
     }
+
+    
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

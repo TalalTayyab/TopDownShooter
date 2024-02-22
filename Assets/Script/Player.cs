@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -8,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float _rotationSpeed;
     [SerializeField] private float _screenBorder;
     [SerializeField] private Slider _dashCDUI;
+    [SerializeField] private GameObject _gameOver;
+    [SerializeField] private AudioSource _audioDamage;
 
     private Rigidbody2D _rigidbody2;
     private Vector2 _movementInput;
@@ -45,6 +48,19 @@ public class Player : MonoBehaviour
             _healthRechargeCD = PowerUpManagerFactory.PowerUpManager.PlayerHealthRechargeCD;
             _hc.AddHealth(PowerUpManagerFactory.PowerUpManager.PlayerHealthRecharge);
         }
+    }
+
+    public void OnDied()
+    {
+        Time.timeScale = 0;
+        _gameOver.SetActive(true);
+       
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene(0);
+        Time.timeScale = 1;
     }
 
     private void Update()
@@ -152,6 +168,7 @@ public class Player : MonoBehaviour
     {
         var damage = Instantiate(_damagePrefab, transform);
         Destroy(damage, 0.5f);
+        if (!_audioDamage.isPlaying) _audioDamage.Play();
     }
 
     //private void OnMove(InputValue inputValue)

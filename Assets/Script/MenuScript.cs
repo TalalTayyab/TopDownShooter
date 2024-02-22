@@ -7,6 +7,7 @@ public class MenuScript : MonoBehaviour
 {
     public void Play()
     {
+        PowerUpManagerFactory.NewClass();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
