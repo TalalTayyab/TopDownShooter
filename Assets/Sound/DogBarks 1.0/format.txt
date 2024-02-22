@@ -1,0 +1,28 @@
+This document explains the filename methodology.
+
+0001AA_M_00_DescriptiveSoundName.EXT
+ \    \  \  \     \                 \
+  \    \  \  \     \                 \_ the countainer for the sound file: RAW, WAV, MP3, MP4, ACC
+   \    \  \  \     \
+    \    \  \  \     \_ descriptive name of the sound
+     \    \  \  \
+      \    \  \  \_ bit rate: 16k, 24k, ...
+       \    \  \
+        \    \  \
+         \    \  \_ Sound positioning. L=LEFT R=RIGHT S=STEREO M=MONO
+          \    \
+           \    \_ AtoZ*2 for indexing.
+            \
+             \_ Sequential always increasing number.
+
+
+
+
+
+
+
+
+
+
+
+
