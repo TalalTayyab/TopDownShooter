@@ -22,7 +22,6 @@ public class PowerUpManager
 
     private string[] categories = new[] { "Bullet", "Player" , "Misc" };
 
-
     public PowerUpManager()
     {
         availablePowerUps.Add("Bullet",
@@ -64,10 +63,29 @@ public class PowerUpManager
         return powerUpsRet;
     }
 
-  
+
+    private int GetWeightedRandomPowerUp(List<PowerUp> powerUps)
+    {
+        int[] weights = powerUps.Select(x=>x.Weight).ToArray();
+        int randomWeight = UnityEngine.Random.Range(0, weights.Sum());
+        for (int i = 0; i < weights.Length; ++i)
+        {
+            randomWeight -= weights[i];
+            if (randomWeight < 0)
+            {
+                Debug.Log($"found {i} - {powerUps[i].ID}");
+                return i;
+            }
+        }
+
+        Debug.Log($"none found - using default");
+        return Random.Range(0, powerUps.Count);
+    }
+
     private PowerUp GetPowerUpsForCategory(List<PowerUp> powerUps)
     {
-        return powerUps[Random.Range(0, powerUps.Count)];
+        int index = GetWeightedRandomPowerUp(powerUps);
+        return powerUps[index];
     }
 
     private float BulletV(string item)
@@ -103,11 +121,16 @@ public abstract class PowerUp
     public string ID { get; set; }
     public float Value { get; set; }
     public string Text { get; protected set; }
+    public bool IsSelected { get; private set; }
+    public int Weight { get; protected set; } = 10;
 
     protected bool _decrease;
 
     public virtual void Selected()
     {
+        IsSelected = true;
+        Weight += Weight;
+
         if (_decrease)
         {
             Value -= Value * 0.1f;

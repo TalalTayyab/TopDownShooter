@@ -89,6 +89,11 @@ public class GameManagerScript : MonoBehaviour
         }
     }
 
+    private List<GameObject> RemoveDestroyed(GameObject[] enemies)
+    {
+        return enemies.Where(x => x != null).ToList();
+    }
+
     void MoveEnemiesIntoCircle(GameObject[] enemies)
     {
         
@@ -106,34 +111,41 @@ public class GameManagerScript : MonoBehaviour
             em.ReachedPosition = false;
             em.FixedPositionForTarget = anchor + offset;
             start += delta;
+
         }
     }
 
-    IEnumerator SpawnEnemyInCircle(int enemies, int speed, int tick, float speed2)
+    IEnumerator SpawnEnemyInCircle(int enemies, float speed, float health, int wait1, int wait2, float speed2)
     {
+        enemies = Mathf.Clamp(enemies, 1, 5);
+
+        speed = Mathf.Clamp(speed, 3.5f, 5.5f);
+
         var l = new List<GameObject>();
 
-        l.AddRange(Spawn(enemies, speed, 100, "top", false));
+        l.AddRange(Spawn(enemies, speed, health, "top", false));
         l.Reverse();
-        l.AddRange(Spawn(enemies, speed, 100, "right", false));
-        l.AddRange(Spawn(enemies, speed, 100, "bottom", false));
-        l.AddRange(Spawn(enemies, speed, 100, "left", false));
+        l.AddRange(Spawn(enemies, speed, health, "right", false));
+        l.AddRange(Spawn(enemies, speed, health, "bottom", false));
+        l.AddRange(Spawn(enemies, speed, health, "left", false));
 
         var cnt = 0;
 
-        while (cnt<= tick)
+        while (cnt<= wait1)
         {
+            // remove destroyed objects
+            l = RemoveDestroyed(l.ToArray());
             MoveEnemiesIntoCircle(l.ToArray());
             yield return new WaitForSeconds(0.1f);
-            var p = l.Count(x => x.GetComponent<EnemyMovement>().ReachedPosition == false);
+            var p = l.Count(x => x!=null && x.GetComponent<EnemyMovement>().ReachedPosition == false);
             if (p == 0) break; // all enemies reached
-            Debug.Log($"{cnt}");
             cnt++;
         }
 
         yield return new WaitForSeconds(0.4f);
 
         l.ForEach(x => {
+            if (x == null) return;
             var em = x.GetComponent<EnemyMovement>();
             em.UseFixedPositionForMovement = false;
             em.SetSpeed(0);
@@ -142,11 +154,40 @@ public class GameManagerScript : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        cnt = 0;
+
+        while (cnt <= wait2)
+        {
+            l.ForEach(x => {
+                if (x == null) return;
+                var em = x.GetComponent<EnemyMovement>();
+                em.SetSpeed(speed2);
+            });
+            yield return new WaitForSeconds(0.1f);
+            cnt++;
+        }
+
         l.ForEach(x => {
+            if (x == null) return;
             var em = x.GetComponent<EnemyMovement>();
-            em.SetSpeed(speed2);
+            em.SetSpeed(speed);
         });
 
+
+        yield return new WaitForSeconds(3f);
+    }
+
+    IEnumerator SpawnSwarm(float speed, float health, float wait)
+    {
+        for (var j = 0; j < 10; j++)
+        {
+            Spawn(1, speed, health, "left");
+            Spawn(1, speed, health, "top");
+            Spawn(1, speed, health, "right");
+            Spawn(1, speed, health, "bottom");
+
+            yield return new WaitForSeconds(wait);
+        }
     }
 
 
@@ -159,30 +200,42 @@ public class GameManagerScript : MonoBehaviour
         _audioLevel1.loop = true;
         _audioLevel1.Play();
 
-        yield return SpawnEnemyInCircle(2, 4, 120, 0.3f);
-
-        yield return new WaitForSeconds(30f);
-
         for (var i = 0; i < 20; i++)
         {
-            var speed = 0.5f + (i / 4f);
+            var speed = 0.5f + (i / 2.5f);
             var health = 0.5f + (i / 4f);
+
+            Debug.Log($"wave start: {wave}-{i} , speed={speed}, health={health}");
+
 
             if (i > 4)
             {
-                Spawn(1, 2, 3, "top", false, true, false);
+                Spawn(1, speed, health, "top", false, true, false);
             }
 
-            if (i%5==0 && i>0)
+            if (i > 8)
             {
-                for (var j = 0; j < 20; j++)
-                {
-                    Spawn(1, speed, health, "left");
-                    Spawn(1, speed, health, "top");
-                    Spawn(1, speed, health, "right");
-                    Spawn(1, speed, health, "bottom");
-                    yield return new WaitForSeconds(0.2f);
-                }
+                Spawn(1, speed, health, "bottom", false, true, false);
+            }
+
+            if (i > 12)
+            {
+                Spawn(1, speed, health, "left", false, true, false);
+            }
+
+            if (i > 16)
+            {
+                Spawn(1, speed, health, "right", false, true, false);
+            }
+
+            /*if (i%4==0 && i>0)
+            {
+                yield return SpawnSwarm(speed, health, 1f);
+            }*/
+
+            if (i % 5 == 0 && i > 0)
+            {
+                yield return SpawnEnemyInCircle(i/6, speed, health, 300, 100, 0.5f);
             }
 
             Spawn(1, speed, health , "left");
@@ -193,11 +246,13 @@ public class GameManagerScript : MonoBehaviour
 
             yield return new WaitForSeconds(3f);
 
-            Spawn(4, speed, health, "bottom");
+            Spawn(2, speed, health, "bottom");
 
             yield return new WaitForSeconds(3f);
 
             Spawn(2, speed, health, "right");
+
+            Debug.Log($"wave end: {wave}-{i}");
 
             yield return new WaitForSeconds(10f);
         }

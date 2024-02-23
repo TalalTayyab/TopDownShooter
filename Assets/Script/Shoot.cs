@@ -33,8 +33,8 @@ public class Shoot : MonoBehaviour
     [SerializeField] private int _maxShieldRechargeTime;
   //  public UnityEvent OnLaserChange;
   //  private float _lastfireTime;
-    private bool _fireContiniously;
-    private bool _fireSingle;
+  //  private bool _fireContiniously;
+   // private bool _fireSingle;
   //  private float _laserCurrentCharge;
     private float _timeUntilShoot;
     private float _timeUntilLastMultiShootDelay;
@@ -339,12 +339,12 @@ public class Shoot : MonoBehaviour
         return go;
     }
 
-    private void OnFire(InputValue inputValue)
+   /* private void OnFire(InputValue inputValue)
     {
         _fireContiniously = inputValue.isPressed;
         if (inputValue.isPressed)
         {
             _fireSingle = true;
         }
-    }
+    }*/
 }
