@@ -72,7 +72,7 @@ public class EnemyMovement : MonoBehaviour
         _movingDelayCurrentValue = _movingDelay;
         _currentVelocity = transform.up * _speed;
 
-        _changeDirectionCoolDown = UnityEngine.Random.Range(0f, 2f);
+        _changeDirectionCoolDown = 0;
 
     }
 

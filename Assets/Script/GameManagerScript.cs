@@ -177,14 +177,15 @@ public class GameManagerScript : MonoBehaviour
         yield return new WaitForSeconds(3f);
     }
 
-    IEnumerator SpawnSwarm(float speed, float health, float wait)
+    IEnumerator SpawnSwarm(int enemies, float speed, float health, float wait)
     {
-        for (var j = 0; j < 10; j++)
+        for (var i = 0; i < enemies; i++)
         {
-            Spawn(1, speed, health, "left");
-            Spawn(1, speed, health, "top");
-            Spawn(1, speed, health, "right");
-            Spawn(1, speed, health, "bottom");
+            var pos = new Vector3(_left.position.x + (i/4), _left.position.y + (i/6), _left.position.z);
+            Spawn(1, speed, health, "left", true, false, false, pos);
+
+            pos = new Vector3(_right.position.x - (i /4), _right.position.y + (i/6), _right.position.z);
+            Spawn(1, speed, health, "right", true, false, false, pos);
 
             yield return new WaitForSeconds(wait);
         }
@@ -200,13 +201,17 @@ public class GameManagerScript : MonoBehaviour
         _audioLevel1.loop = true;
         _audioLevel1.Play();
 
+
+
         for (var i = 0; i < 20; i++)
         {
-            var speed = 0.5f + (i / 2.5f);
+            var speed = 0.5f + (i / 3f);
             var health = 0.5f + (i / 4f);
 
             Debug.Log($"wave start: {wave}-{i} , speed={speed}, health={health}");
 
+           // yield return SpawnSwarm(10, speed, health, 0.5f);
+           // yield return new WaitForSeconds(20f);
 
             if (i > 4)
             {
@@ -261,25 +266,30 @@ public class GameManagerScript : MonoBehaviour
 
     }
 
-    private List<GameObject> Spawn(int enemies, float speed, float health, string loc, bool varspeed = true, bool shoot = false, bool shootMissle = false)
+    private List<GameObject> Spawn(int enemies, float speed, float health, string loc,
+        bool varspeed = true, bool shoot = false, bool shootMissle = false, Vector3? pos = null)
     {
         var l = new List<GameObject>();
         for (float i = 0; i < enemies; i++)
         {
-            var pos = new Vector3();
+            
             float newspeed = speed;
 
-            if (loc=="top") pos = new Vector3(_top.position.x -i, _top.position.y, _top.position.z);
-            if (loc=="left") pos = new Vector3(_left.position.x, _left.position.y +i, _left.position.z);
-            if (loc=="right") pos = new Vector3(_right.position.x, _right.position.y-i, _right.position.z);
-            if (loc=="bottom") pos = new Vector3(_bottom.position.x -i , _bottom.position.y, _bottom.position.z);
+            if (pos == null)
+            {
+
+                if (loc == "top") pos = new Vector3(_top.position.x - i, _top.position.y, _top.position.z);
+                if (loc == "left") pos = new Vector3(_left.position.x, _left.position.y + i, _left.position.z);
+                if (loc == "right") pos = new Vector3(_right.position.x, _right.position.y - i, _right.position.z);
+                if (loc == "bottom") pos = new Vector3(_bottom.position.x - i, _bottom.position.y, _bottom.position.z);
+            }
 
             if (varspeed)
             {
                 newspeed += i  / enemies ;
             }
 
-            l.Add(SpawnEnemy(pos, newspeed, health, shoot, shootMissle));
+            l.Add(SpawnEnemy(pos.Value, newspeed, health, shoot, shootMissle));
         }
 
         return l;

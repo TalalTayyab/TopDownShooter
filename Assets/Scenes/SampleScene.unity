@@ -1322,10 +1322,10 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 457771d0864a67842a71c2fb0a3fdc1a, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.406
+  m_Volume: 0.338
   m_Pitch: 1
   Loop: 0
-  Mute: 1
+  Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
@@ -2396,8 +2396,8 @@ MonoBehaviour:
   _multiShootDelay: 2
   _throwBombDelay: 3
   _playerShieldPrefab: {fileID: 6516336562982944284, guid: fb1f6f4660bfe456eabbcadf03f3335e, type: 3}
-  _maxShieldBalls: 1
-  _maxShieldAvailableTime: 5
+  _maxShieldBalls: 0
+  _maxShieldAvailableTime: 0
   _maxShieldRechargeTime: 3
 --- !u!114 &383067981
 MonoBehaviour:
