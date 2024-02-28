@@ -18,13 +18,26 @@ public class InfoPanelScript : MonoBehaviour
     void Update()
     {
         var p = PowerUpManagerFactory.PowerUpManager;
-        var bullet = $"Bullet - cooldown={p.BulletCD}, critdmg={p.BulletCriticalDamage}, crit%={p.BulletCriticalDamageChance}, dmg={p.BulletDamage}," +
+        var s = string.Empty;
+
+        foreach (var category in p.Categories)
+        {
+            foreach (var powerUp in p.AvailablePowerUps[category])
+            {
+                
+                s += ($"{powerUp.ID}={powerUp.Value}").PadRight(40)+ ($"{powerUp.Weight}%").PadRight(5) + Environment.NewLine;
+            }
+        }
+
+        _text.text = s;
+
+        /*var bullet = $"Bullet - cooldown={p.BulletCD}, critdmg={p.BulletCriticalDamage}, crit%={p.BulletCriticalDamageChance}, dmg={p.BulletDamage}," +
             $" dist={p.BulletDistance}, speed={p.BulletSpeed}";
 
         var level = $"Level={gameManagerScript._level}, Coins={gameManagerScript.CoinsRequiredForLevelling}, PickupRange={p.CoinPickupRange}";
 
         var player = $"Player - speed={p.PlayerSpeed}, health={p.PlayerHealth}, dashcd={p.PlayerDashCD}, dashspeed={p.PlayerDashSpeed}, healthrecharge={p.PlayerHealthRecharge}, healthrechargecd={p.PlayerHealthRechargeCD}";
-
-        _text.text = bullet + Environment.NewLine + level + Environment.NewLine + player + Environment.NewLine;
+       
+        _text.text = bullet + Environment.NewLine + level + Environment.NewLine + player + Environment.NewLine;*/
     }
 }

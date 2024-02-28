@@ -41,18 +41,22 @@ public class EnemyMovement : MonoBehaviour
     enum EnemyState { Moving = 0, Firing = 1 };
     private EnemyState _state = EnemyState.Moving;
     private Vector3 _currentVelocity;
-    private Vector3 _playerPos;
+    // private Vector3 _playerPos;
+    private Renderer _renderer;
+    private float notVisibleTime;
 
     public bool UseFixedPositionForMovement;
     public Vector3 FixedPositionForTarget;
     public bool ReachedPosition;
     public bool DontUseTargetCD;
+    public bool IsVisible => notVisibleTime <= 2f || _renderer.isVisible;
 
+    
     public void SetShoot(bool shoot, bool shootMissle)
     {
         _shoot = shoot;
         _shootMissle = shootMissle;
-        _playerPos = Vector3.zero;
+       // _playerPos = Vector3.zero;
     }
 
     public void SetSpeed(float speed)
@@ -64,7 +68,6 @@ public class EnemyMovement : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _controller = GetComponent<PlayerAwarenessController>();
-        _targetDirection = transform.up;
         _camera = Camera.main;
         _animator = GetComponentInChildren<Animator>();
 
@@ -73,6 +76,12 @@ public class EnemyMovement : MonoBehaviour
         _currentVelocity = transform.up * _speed;
 
         _changeDirectionCoolDown = 0;
+
+        _renderer = GetComponentInChildren<Renderer>();
+        notVisibleTime = 0;
+
+        //  _targetDirection = transform.up;
+        HandlePlayerTargetting(true);
 
     }
 
@@ -103,7 +112,24 @@ public class EnemyMovement : MonoBehaviour
         UpdateTargetDirection();
         RotateTowardsTarget();
         SetVelocity();
+        VisibilityCheck();
+
     }
+
+    private void VisibilityCheck()
+    {
+        if (!_renderer.isVisible)
+        {
+            notVisibleTime += Time.deltaTime;
+        }
+        else
+        {
+            notVisibleTime -= Time.deltaTime;
+        }
+
+        if (notVisibleTime <= 0) notVisibleTime = 0;
+    }
+    
 
     private void MoveAndShoot()
     {
@@ -237,7 +263,8 @@ public class EnemyMovement : MonoBehaviour
     {
         //HandleRandomDirectionChange();
         HandlePlayerTargetting();
-      //  HandleEnemyOffScreen();
+        //  HandleEnemyOffScreen();
+      //  Spread();
     }
 
     public void Attack(bool attacking)
@@ -344,11 +371,29 @@ public class EnemyMovement : MonoBehaviour
         //  if (_controller.AwareOfPlayer)
         _changeDirectionCoolDown -= Time.deltaTime;
 
-        if (_changeDirectionCoolDown<=0 || immediate || DontUseTargetCD)
+        //if (_changeDirectionCoolDown<=0 || immediate || DontUseTargetCD)
         {
-            _playerPos = TargetPosition();
+            //_playerPos = TargetPosition();
             _targetDirection = TargetDirection().normalized;
             _changeDirectionCoolDown = _changeDirectionCoolDown = UnityEngine.Random.Range(0f, 2f);
+        }
+    }
+
+    private void Spread()
+    {
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (var enemy in enemies)
+        {
+            if (enemy == gameObject) continue;
+
+            var distance = Vector2.Distance(enemy.transform.position, gameObject.transform.position);
+
+            if (distance < 1.5f)
+            {
+                var direction =  transform.position - enemy.transform.position;
+                _targetDirection = direction.normalized;
+            }
         }
     }
 

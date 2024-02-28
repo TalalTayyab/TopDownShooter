@@ -17,11 +17,17 @@ public static class PowerUpManagerFactory
 
 public class PowerUpManager 
 {
-   
+    static public int WeightStep = 10;
+    static public int MinWeight = 10;
+    static public int MaxWeight = 70;
+
     private Dictionary<string, List<PowerUp>> availablePowerUps = new Dictionary<string, List<PowerUp>>();
 
     private string[] categories = new[] { "Bullet", "Player" , "Misc" };
 
+    public Dictionary<string, List<PowerUp>> AvailablePowerUps => availablePowerUps;
+    public string[] Categories => categories;
+        
     public PowerUpManager()
     {
         availablePowerUps.Add("Bullet",
@@ -51,7 +57,7 @@ public class PowerUpManager
     }
 
 
-    public List<PowerUp> GetPowerUps()
+    public List<PowerUp> GetPowerUpsFromEachCategory()
     {
         List<PowerUp> powerUpsRet = new List<PowerUp>();
         foreach (var category in categories)
@@ -59,7 +65,6 @@ public class PowerUpManager
             var powerUps = availablePowerUps[category];
             powerUpsRet.Add(GetPowerUpsForCategory(powerUps));
         }
-
         return powerUpsRet;
     }
 
@@ -73,12 +78,10 @@ public class PowerUpManager
             randomWeight -= weights[i];
             if (randomWeight < 0)
             {
-                Debug.Log($"found {i} - {powerUps[i].ID}");
                 return i;
             }
         }
 
-        Debug.Log($"none found - using default");
         return Random.Range(0, powerUps.Count);
     }
 
@@ -86,6 +89,35 @@ public class PowerUpManager
     {
         int index = GetWeightedRandomPowerUp(powerUps);
         return powerUps[index];
+    }
+
+    private string FindPowertUpCategory(string id)
+    {
+        foreach (var kvp in availablePowerUps)
+        {
+            foreach (var p in kvp.Value)
+            {
+                if (p.ID == id)
+                {
+                    return kvp.Key;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void DecreaseWeightInCategory( string idToIgnore)
+    {
+        var category = FindPowertUpCategory(idToIgnore);
+        var powerUps = availablePowerUps[category];
+        foreach (var powerUp in powerUps)
+        {
+            if (powerUp.ID == idToIgnore) continue;
+
+            powerUp.Weight -= (PowerUpManager.WeightStep / 2);
+            powerUp.Weight = Mathf.Clamp(powerUp.Weight, PowerUpManager.MinWeight, PowerUpManager.MaxWeight);
+        }
     }
 
     private float BulletV(string item)
@@ -122,14 +154,18 @@ public abstract class PowerUp
     public float Value { get; set; }
     public string Text { get; protected set; }
     public bool IsSelected { get; private set; }
-    public int Weight { get; protected set; } = 10;
+    public int Weight { get; set; } = PowerUpManager.WeightStep;
 
     protected bool _decrease;
 
-    public virtual void Selected()
+    public void Selected()
     {
         IsSelected = true;
-        Weight += Weight;
+
+        PowerUpManagerFactory.PowerUpManager.DecreaseWeightInCategory(ID);
+
+        Weight += PowerUpManager.WeightStep;
+        Weight = Mathf.Clamp(Weight, PowerUpManager.MinWeight, PowerUpManager.MaxWeight);
 
         if (_decrease)
         {
@@ -149,20 +185,17 @@ public abstract class PowerUp
 
 }
 
-public class BulletSpeed : PowerUp { public override void Init() { ID = "BulletSpeed";  Value = 10;  Text = "Increase bullet speed"; } }
+public class BulletSpeed : PowerUp { public override void Init() { ID = "BulletSpeed";  Value = 8;  Text = "Increase bullet speed"; } }
 
-public class BulletDamage : PowerUp { public override void Init() { ID = "BulletDamage"; Value = 1;  Text = "Increase bullet damage"; } }
+public class BulletDamage : PowerUp { public override void Init() { ID = "BulletDamage"; Value = 1f;  Text = "Increase bullet damage"; } }
 
 public class BulletCriticalDamage : PowerUp { public override void Init() { ID = "BulletCriticalDamage"; Value = 3; Text = "Increase bullet critical damage"; } }
 
 public class BulletDistance : PowerUp { public override void Init() { ID = "BulletDistance"; Value = 0.5f; Text = "Increase bullet distance"; } }
 
-public class BulletCD : PowerUp { public override void Init() { ID = "BulletCD"; Value = 2f; Text = "Decrease bullet cooldown"; _decrease = true; } }
+public class BulletCD : PowerUp { public override void Init() { ID = "BulletCD"; Value = 0.4f; Text = "Decrease bullet cooldown"; _decrease = true; } }
 
-public class BulletCriticalDamageChance : PowerUp {
-    public override void Init() { ID = "BulletCriticalDamageChance"; Value = 20f; Text = "Increase bullet critical damage chance"; }
-    public override void Selected() { Value = Value + 3; }
-}
+public class BulletCriticalDamageChance : PowerUp { public override void Init() { ID = "BulletCriticalDamageChance"; Value = 20f; Text = "Increase bullet critical damage chance"; } }
 
 
 public class PlayerHealth : PowerUp { public override void Init() { ID = "PlayerHealth"; Value = 20;  Text = "Increase player health"; } }

@@ -29,6 +29,7 @@ public class GameManagerScript : MonoBehaviour
     private GameTimeScript _gameTimeScript;
     private int wave = 1;
     public int _level = 1;
+    private Camera _camera;
     public int CoinsRequiredForLevelling
     {
         get
@@ -43,6 +44,7 @@ public class GameManagerScript : MonoBehaviour
     void Start()
     {
         _gameTimeScript = FindObjectOfType<GameTimeScript>();
+        _camera = Camera.main;
 
         StartCoroutine(PlayZombieSound());
     }
@@ -52,7 +54,7 @@ public class GameManagerScript : MonoBehaviour
         _experienceTracker.UpdateExperience(_coins.LevelCoins, CoinsRequiredForLevelling);
         if (_coins.LevelCoins % CoinsRequiredForLevelling == 0 && _coins.LevelCoins > 0)
         {
-            _powerUpUI.Show(PowerUpManager.GetPowerUps());
+            _powerUpUI.Show(PowerUpManager.GetPowerUpsFromEachCategory());
             _level++;
             _coins.NewLevel();
         }
@@ -119,8 +121,6 @@ public class GameManagerScript : MonoBehaviour
     {
         enemies = Mathf.Clamp(enemies, 1, 5);
 
-        speed = Mathf.Clamp(speed, 3.5f, 5.5f);
-
         var l = new List<GameObject>();
 
         l.AddRange(Spawn(enemies, speed, health, "top", false));
@@ -172,25 +172,236 @@ public class GameManagerScript : MonoBehaviour
             var em = x.GetComponent<EnemyMovement>();
             em.SetSpeed(speed);
         });
-
-
-        yield return new WaitForSeconds(3f);
     }
 
     IEnumerator SpawnSwarm(int enemies, float speed, float health, float wait)
     {
-        for (var i = 0; i < enemies; i++)
+        for (var i = 1; i < enemies -1; i++)
         {
-            var pos = new Vector3(_left.position.x + (i/4), _left.position.y + (i/6), _left.position.z);
-            Spawn(1, speed, health, "left", true, false, false, pos);
+            float x, y;
+            Vector3 pos;
+            var hm = Teleport();
 
-            pos = new Vector3(_right.position.x - (i /4), _right.position.y + (i/6), _right.position.z);
-            Spawn(1, speed, health, "right", true, false, false, pos);
+             if (hm.left <= 0.4)
+            {
+                x = _left.position.x;
+                y = i % 2 == 0 ? _left.position.y - (i / 2) : _left.position.y + (i / 2);
+                pos = new Vector3(x, y, 0);
+                Spawn(10, speed, health, "left", true, false, false, pos);
+            }
+
+            if (hm.up <= 0.4)
+            {
+                x = i % 2 == 0 ? _top.position.x - (i / 2) : _top.position.x + (i / 2);
+                y = _top.position.y;
+                pos = new Vector3(x, y, 0);
+                Spawn(10, speed, health, "top", true, false, false, pos);
+            }
+
+            if (hm.right <= 0.4)
+            {
+                x = _right.position.x;
+                y = i % 2 == 0 ? _left.position.y + (i / 2) : _left.position.y - (i / 2);
+                pos = new Vector3(x, y, 0);
+                Spawn(10, speed, health, "right", true, false, false, pos);
+            }
+
+            if (hm.down <= 0.4)
+            {
+                x = i % 2 == 0 ? _top.position.x + (i / 2) : _top.position.x - (i / 2);
+                y = _bottom.position.y;
+                pos = new Vector3(x, y, 0);
+                Spawn(10, speed, health, "bottom", true, false, false, pos);
+            }
 
             yield return new WaitForSeconds(wait);
         }
     }
 
+
+    private IEnumerator SmartWait(string tag, float waitForSeconds)
+    {
+        float totalWaited = 0f;
+        float waitFor = 0.3f;
+        waitFor = waitFor > waitForSeconds ? waitForSeconds : waitFor;
+        while (true)
+        {
+            var count = GameObject.FindGameObjectsWithTag(tag).Length;
+            if (totalWaited >= waitForSeconds || count ==0) break;
+            yield return new WaitForSeconds(waitFor);
+            totalWaited = totalWaited + waitFor;
+            Teleport();
+        } 
+    }
+
+    private (GameObject[] enemies, GameObject[] left, GameObject[] right, GameObject[] up, GameObject[] down) EnemeyHeatMap()
+    {
+        var enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        float cnt = enemies.Count();
+        var t = _player.transform.position;
+
+
+        var left = enemies.Where(e =>
+        {
+            var r = (t.x - e.transform.position.x);
+            //Debug.Log($"left={r}");
+            return r >= 3f;
+        });
+        var right = enemies.Where(e => (t.x - e.transform.position.x) <= -3f);
+        //var up = enemies.Where(e => (t.y - e.transform.position.y) <= -3f);
+        var up = enemies.Where(e =>
+        {
+            var r = (t.y - e.transform.position.y);
+           // Debug.Log($"up={r}");
+            return r <= -3f;
+        });
+        var down = enemies.Where(e => (t.y - e.transform.position.y) >= 3f);
+
+        return (enemies.ToArray(), left.ToArray(), right.ToArray(), up.ToArray(), down.ToArray());
+    }
+   
+
+    private (float left, float right, float up, float down) EnemyHeatMapRatios()
+    {
+        var hm = EnemeyHeatMap();
+        float cnt = hm.enemies.Count();
+
+        if (cnt == 0) return (0, 0, 0, 0);
+
+        var lr = hm.left.Count() / cnt;
+        var rr = hm.right.Count() / cnt;
+        var ur = hm.up.Count() / cnt;
+        var dr = hm.down.Count() / cnt;
+
+        // Debug.Log($"left = {lr}, right = {rr}, up = {ur}, down = {dr}");
+
+        return (lr, rr, ur, dr);
+
+    }
+
+    (float left, float right, float up, float down) Teleport()
+    {
+        var hm = EnemeyHeatMap();
+        float cnt = hm.enemies.Count();
+
+        if (cnt == 0) return (0, 0, 0, 0);
+
+        var lr = hm.left.Count() / cnt;
+        var rr = hm.right.Count() / cnt;
+        var ur = hm.up.Count() / cnt;
+        var dr = hm.down.Count() / cnt;
+
+       //Debug.Log($"left = {lr}, right = {rr}, up = {ur}, down = {dr}");
+
+        var teleported = new List<GameObject>();
+
+        var order = new Dictionary<string, float>();
+        order.Add("lr", lr);
+        order.Add("rr", rr);
+        order.Add("ur", ur);
+        order.Add("dr", dr);
+        var sorted = from entry in order orderby entry.Value ascending select entry;
+
+        foreach (var s in sorted)
+        {
+            switch (s.Key)
+            {
+                case "lr":
+                    TeleportLeftToRight(hm, lr, teleported);
+                    break;
+
+                case "rr":
+                    TeleportRightToLeft(hm, rr, teleported);
+                    break;
+
+                case "ur":
+                    TeleportUpToDown(hm, ur, teleported);
+                    break;
+
+                case "dr":
+                    TeleportDownToUp(hm, dr, teleported);
+                    break;
+            }
+        }
+
+        return (lr, rr, ur, dr);
+    }
+
+    private void TeleportDownToUp((GameObject[] enemies, GameObject[] left, GameObject[] right, GameObject[] up, GameObject[] down) hm, float dr, List<GameObject> teleported)
+    {
+        if (dr > 0.4)
+        {
+            foreach (var e in hm.down)
+            {
+                if (teleported.Exists(x => x.GetInstanceID() == e.GetInstanceID())) continue;
+                var visible = e.GetComponent<EnemyMovement>().IsVisible;
+                if (!visible)//(pos.x > 1 || pos.y > 1)
+                {
+                    Debug.Log($"down to up + {e.transform.position} to {GetPosition("top", 0)}");
+                    e.transform.position = GetPosition("top", 0);
+                    teleported.Add(e);
+                }
+            }
+        }
+    }
+
+    private void TeleportUpToDown((GameObject[] enemies, GameObject[] left, GameObject[] right, GameObject[] up, GameObject[] down) hm, float ur, List<GameObject> teleported)
+    {
+        if (ur > 0.4)
+        {
+            foreach (var e in hm.up)
+            {
+                if (teleported.Exists(x => x.GetInstanceID() == e.GetInstanceID())) continue;
+                var visible = e.GetComponent<EnemyMovement>().IsVisible;
+                if (!visible)//(pos.x > 1 || pos.y > 1)
+                {
+                    Debug.Log($"up to down + {e.transform.position} to {GetPosition("bottom", 0)}");
+                    e.transform.position = GetPosition("bottom", 0);
+                    teleported.Add(e);
+                }
+            }
+        }
+    }
+
+    private void TeleportRightToLeft((GameObject[] enemies, GameObject[] left, GameObject[] right, GameObject[] up, GameObject[] down) hm, float rr, List<GameObject> teleported)
+    {
+        if (rr > 0.4)
+        {
+            foreach (var e in hm.right)
+            {
+                if (teleported.Exists(x => x.GetInstanceID() == e.GetInstanceID())) continue;
+                var visible = e.GetComponent<EnemyMovement>().IsVisible;
+                if (!visible)//(pos.x > 1 || pos.y > 1)
+                {
+                    //Debug.Log($"right to left + {e.transform.position} to {GetPosition("left", 0)}");
+                    e.transform.position = GetPosition("left", 0);
+                    teleported.Add(e);
+                }
+            }
+        }
+    }
+
+    private void TeleportLeftToRight((GameObject[] enemies, GameObject[] left, GameObject[] right, GameObject[] up, GameObject[] down) hm, float lr, List<GameObject> teleported)
+    {
+       // Debug.Log($"teleport left to right {lr} - {hm.left.Count()}");
+
+        if (lr > 0.4)
+        {
+            foreach (var e in hm.left)
+            {
+                if (teleported.Exists(x => x.GetInstanceID() == e.GetInstanceID())) continue;
+
+                //var pos = _camera.WorldToViewportPoint(e.transform.position);
+                //Debug.Log($"left to right + {e.transform.position} to {GetPosition("right", 0)} - visible = {visible}");
+                var visible = e.GetComponent<EnemyMovement>().IsVisible;
+                if (!visible)//(pos.x > 1 || pos.y > 1)
+                {
+                    e.transform.position = GetPosition("right", 0);
+                    teleported.Add(e);
+                }
+            }
+        }
+    }
 
     IEnumerator S1()
     {
@@ -201,65 +412,51 @@ public class GameManagerScript : MonoBehaviour
         _audioLevel1.loop = true;
         _audioLevel1.Play();
 
-
-
         for (var i = 0; i < 20; i++)
         {
-            var speed = 0.5f + (i / 3f);
-            var health = 0.5f + (i / 4f);
+            var speed = 0.4f + (i / 3f);
+            var health = 1f;
+            var shooterhealth = 4;
+            var circlehealth = 6;
+            
 
             Debug.Log($"wave start: {wave}-{i} , speed={speed}, health={health}");
 
-           // yield return SpawnSwarm(10, speed, health, 0.5f);
-           // yield return new WaitForSeconds(20f);
+            //yield return SpawnSwarm(10 + (i*2), speed, health, 2f);
+
+            yield return Spawn(1, 1, 100, "top");
+
+
+            yield return SmartWait("Enemy",500f);
 
             if (i > 4)
             {
-                Spawn(1, speed, health, "top", false, true, false);
+                Spawn(1, speed, shooterhealth, "top", false, true, false);
             }
 
             if (i > 8)
             {
-                Spawn(1, speed, health, "bottom", false, true, false);
+                Spawn(1, speed, shooterhealth, "bottom", false, true, false);
             }
 
             if (i > 12)
             {
-                Spawn(1, speed, health, "left", false, true, false);
+                Spawn(1, speed, shooterhealth, "left", false, true, false);
             }
 
             if (i > 16)
             {
-                Spawn(1, speed, health, "right", false, true, false);
+                Spawn(1, speed, shooterhealth, "right", false, true, false);
             }
 
-            /*if (i%4==0 && i>0)
+            if (i % 4 == 0 && i > 0)
             {
-                yield return SpawnSwarm(speed, health, 1f);
-            }*/
-
-            if (i % 5 == 0 && i > 0)
-            {
-                yield return SpawnEnemyInCircle(i/6, speed, health, 300, 100, 0.5f);
+                yield return SpawnEnemyInCircle(i/6, speed, circlehealth, 300, 100, 0.5f);
             }
-
-            Spawn(1, speed, health , "left");
-
-            yield return new WaitForSeconds(3f);
-
-            Spawn(1, speed, health, "top");
-
-            yield return new WaitForSeconds(3f);
-
-            Spawn(2, speed, health, "bottom");
-
-            yield return new WaitForSeconds(3f);
-
-            Spawn(2, speed, health, "right");
 
             Debug.Log($"wave end: {wave}-{i}");
 
-            yield return new WaitForSeconds(10f);
+            //yield return SmartWait("Enemy", 20f);
         }
 
         _audioLevel1.Stop();
@@ -277,22 +474,31 @@ public class GameManagerScript : MonoBehaviour
 
             if (pos == null)
             {
-
-                if (loc == "top") pos = new Vector3(_top.position.x - i, _top.position.y, _top.position.z);
-                if (loc == "left") pos = new Vector3(_left.position.x, _left.position.y + i, _left.position.z);
-                if (loc == "right") pos = new Vector3(_right.position.x, _right.position.y - i, _right.position.z);
-                if (loc == "bottom") pos = new Vector3(_bottom.position.x - i, _bottom.position.y, _bottom.position.z);
+                pos = GetPosition(loc, i);
             }
 
             if (varspeed)
             {
-                newspeed += i  / enemies ;
+                newspeed += Random.Range(-1.5f, 1.5f);
+                newspeed = Mathf.Clamp(newspeed, 1f, 6f);
             }
 
             l.Add(SpawnEnemy(pos.Value, newspeed, health, shoot, shootMissle));
         }
 
         return l;
+    }
+
+    private Vector3 GetPosition(string loc, float i)
+    {
+        Vector3 pos = Vector3.zero;
+
+        if (loc == "top") pos = new Vector3(_top.position.x - i, _top.position.y, _top.position.z);
+        if (loc == "left") pos = new Vector3(_left.position.x, _left.position.y + i, _left.position.z);
+        if (loc == "right") pos = new Vector3(_right.position.x, _right.position.y - i, _right.position.z);
+        if (loc == "bottom") pos = new Vector3(_bottom.position.x - i, _bottom.position.y, _bottom.position.z);
+
+        return pos;
     }
    
 
